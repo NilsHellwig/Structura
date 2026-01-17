@@ -260,14 +260,19 @@ export default function Sidebar({
           </Tooltip>
           <div className="flex-1" />
           <Tooltip content="Logout" side="right">
-            <button
-              onClick={logout}
-              className={`p-2.5 rounded-lg transition-colors ${
-                darkMode ? 'text-zinc-500 hover:text-red-400 hover:bg-red-900/20' : 'text-zinc-400 hover:text-red-600 hover:bg-red-50'
-              }`}
-            >
-              <SignOut size={20} weight="bold" />
-            </button>
+            <div className="flex flex-col items-center gap-2">
+              <span className={`text-[10px] font-bold uppercase tracking-tighter ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                {user?.username?.substring(0, 3)}
+              </span>
+              <button
+                onClick={logout}
+                className={`p-2.5 rounded-lg transition-colors ${
+                  darkMode ? 'text-zinc-500 hover:text-red-400 hover:bg-red-900/20' : 'text-zinc-400 hover:text-red-600 hover:bg-red-50'
+                }`}
+              >
+                <SignOut size={20} weight="bold" />
+              </button>
+            </div>
           </Tooltip>
         </motion.div>
       )}
