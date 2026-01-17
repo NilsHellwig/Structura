@@ -4,7 +4,7 @@ export enum MessageRole {
 }
 
 export enum OutputFormat {
-  FREETEXT = 'freetext',
+  DEFAULT = 'default',
   JSON = 'json',
   TEMPLATE = 'template',
   REGEX = 'regex',
@@ -31,14 +31,14 @@ export interface Conversation {
 }
 
 export interface Message {
-  id: number;
-  conversation_id: number;
-  role: MessageRole;
+  id?: number;
+  conversation_id?: number;
+  role: 'user' | 'assistant';
   content: string;
-  created_at: string;
-  backend?: LLMBackend;
+  created_at?: string;
+  backend?: string;
   model?: string;
-  output_format?: OutputFormat;
+  output_format?: string;
   llm_parameters?: Record<string, any>;
   format_spec?: string;
 }

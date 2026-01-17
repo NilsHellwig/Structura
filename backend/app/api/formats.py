@@ -37,7 +37,7 @@ def create_json_schema(
     new_schema = JSONSchema(
         user_id=current_user.id,
         name=schema.name,
-        schema=schema.schema_content
+        schema=schema.schema
     )
     db.add(new_schema)
     db.commit()
@@ -66,8 +66,8 @@ def update_json_schema(
     
     if schema_update.name is not None:
         schema.name = schema_update.name
-    if schema_update.schema_content is not None:
-        schema.schema = schema_update.schema_content
+    if schema_update.schema is not None:
+        schema.schema = schema_update.schema
     
     db.commit()
     db.refresh(schema)

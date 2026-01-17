@@ -2,21 +2,25 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useChatStore } from '../store/chatStore';
+import { useUIStore } from '../store/uiStore';
 import Sidebar from '../components/Sidebar';
 import ChatHeader from '../components/ChatHeader';
 import ChatArea from '../components/ChatArea';
-import FormatEditor from '../components/FormatEditor';
 import PromptEditor from '../components/PromptEditor';
+import IntroModal from '../components/IntroModal';
 import api from '../lib/api';
 import type { Conversation } from '../types';
 
 export default function Chat() {
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const darkMode = useUIStore((state) => state.darkMode);
   const currentConversationId = useChatStore((state) => state.currentConversationId);
   const setCurrentConversation = useChatStore((state) => state.setCurrentConversation);
+  const setMessages = useChatStore((state) => state.setMessages);
+  const conversations = useChatStore((state) => state.conversations);
+  const setConversations = useChatStore((state) => state.setConversations);
   
-  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,30 +30,32 @@ export default function Chat() {
   }, [isAuthenticated, navigate]);
 
   useEffect(() => {
-    loadConversations();
+    useChatStore.getState().loadConversations().then(() => setLoading(false));
   }, []);
 
-  const loadConversations = async () => {
+  useEffect(() => {
+    if (currentConversationId) {
+      loadMessages();
+    } else {
+      setMessages([]);
+    }
+  }, [currentConversationId]);
+
+  const loadMessages = async () => {
+    if (!currentConversationId) return;
+    
     try {
-      const response = await api.get('/conversations/');
-      setConversations(response.data);
-      
-      // Set first conversation as current if none selected
-      if (!currentConversationId && response.data.length > 0) {
-        setCurrentConversation(response.data[0].id);
-      }
+      const response = await api.get(`/conversations/${currentConversationId}/messages`);
+      setMessages(response.data);
     } catch (error) {
-      console.error('Error loading conversations:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error loading messages:', error);
+      setMessages([]);
     }
   };
 
   const createNewConversation = async () => {
     try {
-      const response = await api.post('/conversations/', {});
-      setConversations([response.data, ...conversations]);
-      setCurrentConversation(response.data.id);
+      await useChatStore.getState().createNewConversation();
     } catch (error) {
       console.error('Error creating conversation:', error);
     }
@@ -83,13 +89,16 @@ export default function Chat() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-light-muted dark:text-dark-muted">Laden...</div>
+        <div className="text-light-muted dark:text-dark-muted">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex bg-[#f7f7f8] dark:bg-[#0d0d0d]">
+    <div className={`h-screen flex overflow-hidden ${
+      darkMode ? 'bg-zinc-950 text-zinc-100' : 'bg-zinc-50 text-zinc-900'
+    }`}>
+      <IntroModal />
       <Sidebar
         conversations={conversations}
         currentConversationId={currentConversationId}
@@ -99,16 +108,11 @@ export default function Chat() {
         onRenameConversation={renameConversation}
       />
       
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 relative">
         <ChatHeader />
-        
-        <div className="flex-1 flex overflow-hidden px-6 py-4 gap-4 max-w-6xl mx-auto w-full">
-          <div className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-[#0f0f12] border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm">
-            <ChatArea conversationId={currentConversationId} />
-            <PromptEditor conversationId={currentConversationId} />
-          </div>
-          
-          <FormatEditor />
+        <ChatArea />
+        <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
+          <PromptEditor />
         </div>
       </div>
     </div>

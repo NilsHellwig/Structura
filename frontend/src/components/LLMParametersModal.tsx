@@ -1,37 +1,38 @@
 import { useState } from 'react';
-import { X, Faders } from 'phosphor-react';
+import { X, Faders, FloppyDisk, ArrowsClockwise } from 'phosphor-react';
 import { motion } from 'framer-motion';
 import { useChatStore } from '../store/chatStore';
 import { useUIStore } from '../store/uiStore';
-import { LLMBackend } from '../types';
 
 interface LLMParametersModalProps {
   onClose: () => void;
 }
 
 export default function LLMParametersModal({ onClose }: LLMParametersModalProps) {
-  const { selectedBackend, llmParameters, setLLMParameters } = useChatStore();
+  const { backend, llmParameters, setLLMParameters } = useChatStore();
   const darkMode = useUIStore((state) => state.darkMode);
   
   const [temperature, setTemperature] = useState(llmParameters.temperature || 0.7);
   const [maxTokens, setMaxTokens] = useState(llmParameters.max_tokens || 2048);
+  const [topP, setTopP] = useState(llmParameters.top_p || 1.0);
   const [apiKey, setApiKey] = useState(llmParameters.api_key || '');
   const [baseUrl, setBaseUrl] = useState(
     llmParameters.base_url || 
-    (selectedBackend === LLMBackend.VLLM ? 'http://localhost:8000' : 'http://localhost:11434')
+    (backend === 'vllm' ? 'http://localhost:8000' : 'http://localhost:11434')
   );
 
   const handleSave = () => {
     const params: Record<string, any> = {
       temperature,
       max_tokens: maxTokens,
+      top_p: topP,
     };
     
-    if (selectedBackend === LLMBackend.OPENAI && apiKey) {
+    if (backend === 'openai' && apiKey) {
       params.api_key = apiKey;
     }
     
-    if (selectedBackend !== LLMBackend.OPENAI && baseUrl) {
+    if (backend !== 'openai' && baseUrl) {
       params.base_url = baseUrl;
     }
     
@@ -40,44 +41,51 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 10 }}
         onClick={(e) => e.stopPropagation()}
-        className={`max-w-md w-full rounded-2xl p-6 shadow-2xl ${
+        className={`max-w-md w-full rounded-lg p-6 shadow-2xl ${
           darkMode 
-            ? 'bg-[var(--color-surface-dark)] border border-[var(--color-border-dark)]' 
-            : 'bg-white border border-gray-100'
+            ? 'bg-zinc-950 border border-zinc-800' 
+            : 'bg-white border border-zinc-200 shadow-zinc-200/50'
         }`}
       >
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <Faders size={24} weight="bold" className="text-[var(--color-primary)]" />
+            <Faders size={24} weight="bold" className={darkMode ? 'text-zinc-100' : 'text-zinc-900'} />
             <h2 className={`text-xl font-bold ${
-              darkMode ? 'text-white' : 'text-gray-900'
-            }`}>LLM Parameter</h2>
+              darkMode ? 'text-zinc-100' : 'text-zinc-900'
+            }`}>LLM Parameters</h2>
           </div>
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={onClose}
             className={`p-2 rounded-lg transition-colors ${
-              darkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'
+              darkMode ? 'hover:bg-zinc-900 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-500'
             }`}
           >
-            <X size={20} weight="bold" className={darkMode ? 'text-gray-400' : 'text-gray-600'} />
+            <X size={20} weight="bold" />
           </motion.button>
         </div>
 
         <div className="space-y-5">
           <div>
-            <label className={`block text-sm font-semibold mb-2 ${
-              darkMode ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              Temperature ({temperature.toFixed(1)})
-            </label>
+            <div className="flex justify-between items-center mb-2">
+              <label className={`text-[10px] font-bold uppercase tracking-wider ${
+                darkMode ? 'text-zinc-500' : 'text-zinc-400'
+              }`}>
+                Temperature
+              </label>
+              <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                darkMode ? 'bg-zinc-800 text-zinc-300' : 'bg-zinc-100 text-zinc-600'
+              }`}>
+                {temperature.toFixed(1)}
+              </span>
+            </div>
             <input
               type="range"
               min="0"
@@ -85,18 +93,37 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
               step="0.1"
               value={temperature}
               onChange={(e) => setTemperature(parseFloat(e.target.value))}
-              className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
+              className="slider-zinc w-full h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-zinc-500"
             />
-            <p className={`text-xs mt-2 ${
-              darkMode ? 'text-gray-400' : 'text-gray-600'
-            }`}>
-              Niedrigere Werte = konsistentere Antworten, höhere Werte = kreativere Antworten
-            </p>
           </div>
 
           <div>
-            <label className={`block text-sm font-semibold mb-2 ${
-              darkMode ? 'text-gray-300' : 'text-gray-700'
+            <div className="flex justify-between items-center mb-2">
+              <label className={`text-[10px] font-bold uppercase tracking-wider ${
+                darkMode ? 'text-zinc-500' : 'text-zinc-400'
+              }`}>
+                Top P
+              </label>
+              <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                darkMode ? 'bg-zinc-800 text-zinc-300' : 'bg-zinc-100 text-zinc-600'
+              }`}>
+                {topP.toFixed(1)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value={topP}
+              onChange={(e) => setTopP(parseFloat(e.target.value))}
+              className="slider-zinc w-full h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-zinc-500"
+            />
+          </div>
+
+          <div>
+            <label className={`block text-[10px] font-bold uppercase tracking-wider mb-2 ${
+              darkMode ? 'text-zinc-500' : 'text-zinc-400'
             }`}>
               Max Tokens
             </label>
@@ -106,18 +133,18 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
               max="100000"
               value={maxTokens}
               onChange={(e) => setMaxTokens(parseInt(e.target.value))}
-              className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-all ${
+              className={`w-full px-4 py-3 rounded-lg border outline-none font-medium text-sm transition-all ${
                 darkMode
-                  ? 'bg-white/5 border-white/10 text-white focus:border-purple-500'
-                  : 'bg-white border-gray-200 text-gray-900 focus:border-purple-500'
+                  ? 'bg-zinc-900 border-zinc-800 text-zinc-100 focus:border-zinc-100'
+                  : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-zinc-900'
               }`}
             />
           </div>
 
-          {selectedBackend === LLMBackend.OPENAI && (
+          {backend === 'openai' && (
             <div>
-              <label className={`block text-sm font-semibold mb-2 ${
-                darkMode ? 'text-gray-300' : 'text-gray-700'
+              <label className={`block text-[10px] font-bold uppercase tracking-wider mb-2 ${
+                darkMode ? 'text-zinc-500' : 'text-zinc-400'
               }`}>
                 API Key (optional)
               </label>
@@ -126,24 +153,19 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
                 placeholder="sk-..."
-                className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-all ${
+                className={`w-full px-4 py-3 rounded-lg border outline-none font-medium text-sm transition-all ${
                   darkMode
-                    ? 'bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-purple-500'
-                    : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-purple-500'
+                    ? 'bg-zinc-900 border-zinc-800 text-zinc-100 placeholder-zinc-700 focus:border-zinc-100'
+                    : 'bg-zinc-50 border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:border-zinc-900'
                 }`}
               />
-              <p className={`text-xs mt-2 ${
-                darkMode ? 'text-gray-400' : 'text-gray-600'
-              }`}>
-                Falls nicht gesetzt, wird der API Key aus der .env verwendet
-              </p>
             </div>
           )}
 
-          {selectedBackend !== LLMBackend.OPENAI && (
+          {backend !== 'openai' && (
             <div>
-              <label className={`block text-sm font-semibold mb-2 ${
-                darkMode ? 'text-gray-300' : 'text-gray-700'
+              <label className={`block text-[10px] font-bold uppercase tracking-wider mb-2 ${
+                darkMode ? 'text-zinc-500' : 'text-zinc-400'
               }`}>
                 Base URL
               </label>
@@ -151,38 +173,40 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
                 type="url"
                 value={baseUrl}
                 onChange={(e) => setBaseUrl(e.target.value)}
-                placeholder={selectedBackend === LLMBackend.VLLM ? 'http://localhost:8000' : 'http://localhost:11434'}
-                className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-all ${
+                placeholder={backend === 'vllm' ? 'http://localhost:8000' : 'http://localhost:11434'}
+                className={`w-full px-4 py-3 rounded-lg border outline-none font-medium text-sm transition-all ${
                   darkMode
-                    ? 'bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-purple-500'
-                    : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-purple-500'
+                    ? 'bg-zinc-900 border-zinc-800 text-zinc-100 placeholder-zinc-700 focus:border-zinc-100'
+                    : 'bg-zinc-50 border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:border-zinc-900'
                 }`}
               />
             </div>
           )}
         </div>
 
-        <div className="mt-6 flex gap-3">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleSave}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] text-white rounded-xl font-semibold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all"
-          >
-            Speichern
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+        <div className="mt-8 flex gap-3">
+          <button
             onClick={onClose}
-            className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
+            className={`flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
               darkMode
-                ? 'bg-white/10 text-white hover:bg-white/20'
-                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                ? 'bg-zinc-900 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800'
+                : 'bg-zinc-100 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200'
             }`}
           >
-            Abbrechen
-          </motion.button>
+            <X size={16} weight="bold" />
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className={`flex-1 py-3 rounded-xl font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
+              darkMode
+                ? 'bg-zinc-100 text-zinc-900 hover:bg-white'
+                : 'bg-zinc-900 text-white hover:bg-zinc-800 text-zinc-50'
+            }`}
+          >
+            <FloppyDisk size={18} weight="bold" />
+            Save Changes
+          </button>
         </div>
       </motion.div>
     </div>

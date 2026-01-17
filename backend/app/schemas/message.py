@@ -10,7 +10,7 @@ class MessageRole(str, Enum):
 
 
 class OutputFormat(str, Enum):
-    freetext = "freetext"
+    default = "default"
     json = "json"
     template = "template"
     regex = "regex"
@@ -34,6 +34,10 @@ class MessageCreate(BaseModel):
     output_format: OutputFormat
     llm_parameters: Optional[Dict[str, Any]] = None
     format_spec: Optional[str] = None  # JSON schema, template, or regex
+
+
+class MessageUpdate(BaseModel):
+    content: str
 
 
 class MessageResponse(BaseModel):

@@ -5,7 +5,7 @@ from typing import Optional
 
 class JSONSchemaBase(BaseModel):
     name: str
-    schema_content: str
+    schema: str
 
 
 class JSONSchemaCreate(JSONSchemaBase):
@@ -14,7 +14,7 @@ class JSONSchemaCreate(JSONSchemaBase):
 
 class JSONSchemaUpdate(BaseModel):
     name: Optional[str] = None
-    schema_content: Optional[str] = None
+    schema: Optional[str] = None
 
 
 class JSONSchemaResponse(JSONSchemaBase):

@@ -11,7 +11,7 @@ class MessageRole(str, enum.Enum):
 
 
 class OutputFormat(str, enum.Enum):
-    freetext = "freetext"
+    default = "default"
     json = "json"
     template = "template"
     regex = "regex"

@@ -1,42 +1,105 @@
 @import "tailwindcss";
+@import "highlight.js/styles/github-dark.css";
 
 @theme {
-  --font-manrope: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-manrope: 'Manrope', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 
-  /* Light mode colors */
-  --color-bg-light: #ffffff;
-  --color-surface-light: #f9fafb;
-  --color-border-light: #e5e7eb;
-  --color-text-primary: #111827;
-  --color-text-secondary: #6b7280;
-  --color-text-tertiary: #9ca3af;
+  /* Palette - Portfolio Style (Zinc) */
+  --color-accent: #000000;
+  --color-accent-hover: #18181b;
+  --color-accent-light: #27272a;
+  
+  --color-navy: #18181b;
+  --color-teal: #3f3f46;
+  --color-cream: #fafafa;
 
-  /* Dark mode colors */
-  --color-bg-dark: #111827;
-  --color-surface-dark: #1f2937;
-  --color-border-dark: #374151;
-  --color-text-dark-primary: #f9fafb;
-  --color-text-dark-secondary: #d1d5db;
-  --color-text-dark-tertiary: #9ca3af;
-
-  /* Accent colors */
-  --color-primary: #10a37f;
-  --color-primary-hover: #0d8a6b;
-  --color-error: #ef4444;
-  --color-warning: #f59e0b;
+  /* Surface / Border aliases */
+  --color-surface-dark: #09090b;
+  --color-border-dark: #27272a;
 }
 
-
-
 body {
-  font-family: var(--font-manrope);
-  background-color: var(--color-bg-light);
-  color: var(--color-text-primary);
+  font-family: var(--font-inter);
+  background-color: var(--color-cream);
+  color: var(--color-navy);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-body.dark {
-  background-color: var(--color-bg-dark);
-  color: var(--color-text-dark-primary);
+.dark body {
+  background-color: var(--color-surface-dark);
+  color: #fafafa;
+}
+
+::selection {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.dark ::selection {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+
+.manrope-font {
+  font-family: var(--font-manrope);
+}
+
+pre, code {
+  font-family: var(--font-mono) !important;
+}
+
+/* Custom Slider (Zinc) */
+.slider-zinc {
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #d4d4d8; /* zinc-300 */
+  border-radius: 5px;
+  outline: none;
+  transition: background 0.2s;
+}
+
+.dark .slider-zinc {
+  background: #3f3f46; /* zinc-700 */
+}
+
+.slider-zinc::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #18181b; /* zinc-900 */
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.dark .slider-zinc::-webkit-slider-thumb {
+  background: #fafafa; /* zinc-50 */
+  border: 2px solid #18181b; /* zinc-900 */
+}
+
+.slider-zinc::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.slider-zinc::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #18181b;
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.dark .slider-zinc::-moz-range-thumb {
+  background: #fafafa;
+  border: 2px solid #18181b;
 }

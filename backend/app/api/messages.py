@@ -1,13 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
+import json
 from app.database import get_db
 from app.models import Message, Conversation, MessageRole
-from app.schemas.message import MessageResponse, MessageCreate
+from app.schemas.message import MessageResponse, MessageCreate, MessageUpdate
 from app.dependencies import get_current_user
 from app.models import User
-from app.services.llm import generate_llm_response
+from app.services.llm import generate_llm_response, generate_llm_response_stream
 
 router = APIRouter(prefix="/conversations/{conversation_id}/messages", tags=["messages"])
 
@@ -92,10 +94,8 @@ async def create_message(
         )
         db.add(assistant_message)
         
-        # Update conversation timestamp
+        # Update conversation timestamp and auto-title
         conversation.updated_at = datetime.utcnow()
-        
-        # Auto-generate title if it's the first message
         if len(conversation.messages) == 0:
             conversation.title = message.content[:50] + ("..." if len(message.content) > 50 else "")
         
@@ -109,6 +109,139 @@ async def create_message(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error generating LLM response: {str(e)}"
         )
+
+
+@router.post("/stream")
+async def create_message_stream(
+    conversation_id: int,
+    message: MessageCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Send a message and get streaming LLM response"""
+    # Verify conversation belongs to user
+    conversation = db.query(Conversation).filter(
+        Conversation.id == conversation_id,
+        Conversation.user_id == current_user.id
+    ).first()
+    
+    if not conversation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found"
+        )
+    
+    # Save user message
+    user_message = Message(
+        conversation_id=conversation_id,
+        role=MessageRole.user,
+        content=message.content
+    )
+    db.add(user_message)
+    db.commit()
+    db.refresh(user_message)
+    
+    async def generate():
+        full_response = ""
+        try:
+            async for chunk in generate_llm_response_stream(
+                backend=message.backend,
+                model=message.model,
+                messages=_get_conversation_history(conversation_id, db),
+                output_format=message.output_format,
+                format_spec=message.format_spec,
+                parameters=message.llm_parameters or {}
+            ):
+                full_response += chunk
+                yield f"data: {json.dumps({'chunk': chunk})}\n\n"
+            
+            # Save complete assistant message
+            assistant_message = Message(
+                conversation_id=conversation_id,
+                role=MessageRole.assistant,
+                content=full_response,
+                backend=message.backend,
+                model=message.model,
+                output_format=message.output_format,
+                llm_parameters=message.llm_parameters,
+                format_spec=message.format_spec
+            )
+            db.add(assistant_message)
+            
+            # Update conversation
+            conversation.updated_at = datetime.utcnow()
+            if len(conversation.messages) == 0:
+                conversation.title = message.content[:50] + ("..." if len(message.content) > 50 else "")
+            
+            db.commit()
+            db.refresh(assistant_message)
+            
+            yield f"data: {json.dumps({'done': True, 'message_id': assistant_message.id})}\n\n"
+            
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+    
+    return StreamingResponse(generate(), media_type="text/event-stream")
+
+
+@router.patch("/{message_id}", response_model=MessageResponse)
+def update_message(
+    conversation_id: int,
+    message_id: int,
+    message_update: MessageUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Update a message. If it's a user message, delete all subsequent messages."""
+    conversation = db.query(Conversation).filter(
+        Conversation.id == conversation_id,
+        Conversation.user_id == current_user.id
+    ).first()
+    
+    if not conversation:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+        
+    message = db.query(Message).filter(Message.id == message_id, Message.conversation_id == conversation_id).first()
+    if not message:
+        raise HTTPException(status_code=404, detail="Message not found")
+        
+    message.content = message_update.content
+    
+    # If it's a user message, delete all subsequent messages in this conversation
+    if message.role == MessageRole.user:
+        db.query(Message).filter(
+            Message.conversation_id == conversation_id,
+            Message.created_at > message.created_at
+        ).delete()
+    
+    db.commit()
+    db.refresh(message)
+    return message
+
+
+@router.delete("/{message_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_message(
+    conversation_id: int,
+    message_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Delete a single message."""
+    conversation = db.query(Conversation).filter(
+        Conversation.id == conversation_id,
+        Conversation.user_id == current_user.id
+    ).first()
+    
+    if not conversation:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+        
+    message = db.query(Message).filter(Message.id == message_id, Message.conversation_id == conversation_id).first()
+    if not message:
+        raise HTTPException(status_code=404, detail="Message not found")
+        
+    db.delete(message)
+    db.commit()
+    return None
 
 
 def _get_conversation_history(conversation_id: int, db: Session) -> List[dict]:

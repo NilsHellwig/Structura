@@ -1,7 +1,6 @@
 import { BracketsCurly, TextAa, Textbox } from 'phosphor-react';
 import { useChatStore } from '../store/chatStore';
 import { useUIStore } from '../store/uiStore';
-import { OutputFormat } from '../types';
 import JSONSchemaEditor from './editors/JSONSchemaEditor';
 import TemplateEditor from './editors/TemplateEditor';
 import RegexEditor from './editors/RegexEditor';
@@ -13,11 +12,11 @@ export default function FormatEditor() {
   const getFormatIcon = () => {
     const iconClass = darkMode ? 'text-gray-400' : 'text-gray-600';
     switch (outputFormat) {
-      case OutputFormat.JSON:
+      case 'json':
         return <BracketsCurly size={16} className={iconClass} />;
-      case OutputFormat.TEMPLATE:
+      case 'template':
         return <Textbox size={16} className={iconClass} />;
-      case OutputFormat.REGEX:
+      case 'regex':
         return <TextAa size={16} className={iconClass} />;
       default:
         return null;
@@ -26,25 +25,25 @@ export default function FormatEditor() {
 
   const getFormatDescription = () => {
     switch (outputFormat) {
-      case OutputFormat.JSON:
+      case 'json':
         return 'Define JSON schema';
-      case OutputFormat.TEMPLATE:
+      case 'template':
         return 'Configure template';
-      case OutputFormat.REGEX:
+      case 'regex':
         return 'Set regex pattern';
-      case OutputFormat.FREETEXT:
-        return 'No configuration required';
+      case 'default':
+        return 'Default mode - no configuration required';
       default:
         return '';
     }
   };
 
-  if (outputFormat === OutputFormat.FREETEXT) {
+  if (outputFormat === 'default') {
     return (
       <div
         className={`w-80 border-l flex items-center justify-center ${
           darkMode
-            ? 'bg-[#0d0d0d] border-gray-800'
+            ? 'bg-[#1a1a1a] border-gray-700'
             : 'bg-white border-gray-200'
         }`}
       >
@@ -61,7 +60,7 @@ export default function FormatEditor() {
     <div
       className={`w-80 border-l flex flex-col ${
         darkMode
-          ? 'bg-[#0d0d0d] border-gray-800'
+          ? 'bg-[#1a1a1a] border-gray-700'
           : 'bg-white border-gray-200'
       }`}
     >
@@ -86,9 +85,9 @@ export default function FormatEditor() {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {outputFormat === OutputFormat.JSON && <JSONSchemaEditor />}
-        {outputFormat === OutputFormat.TEMPLATE && <TemplateEditor />}
-        {outputFormat === OutputFormat.REGEX && <RegexEditor />}
+        {outputFormat === 'json' && <JSONSchemaEditor />}
+        {outputFormat === 'template' && <TemplateEditor />}
+        {outputFormat === 'regex' && <RegexEditor />}
       </div>
     </div>
   );
