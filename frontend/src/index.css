@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --font-manrope: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Light mode colors */
+  --color-bg-light: #ffffff;
+  --color-surface-light: #f9fafb;
+  --color-border-light: #e5e7eb;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #9ca3af;
+
+  /* Dark mode colors */
+  --color-bg-dark: #111827;
+  --color-surface-dark: #1f2937;
+  --color-border-dark: #374151;
+  --color-text-dark-primary: #f9fafb;
+  --color-text-dark-secondary: #d1d5db;
+  --color-text-dark-tertiary: #9ca3af;
+
+  /* Accent colors */
+  --color-primary: #10a37f;
+  --color-primary-hover: #0d8a6b;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+}
+
+
+
+body {
+  font-family: var(--font-manrope);
+  background-color: var(--color-bg-light);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.dark {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-dark-primary);
+}
