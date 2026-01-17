@@ -33,67 +33,65 @@ export default function Login() {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center px-4 py-12 ${
-      darkMode ? 'bg-zinc-950' : 'bg-zinc-50'
+    <div className={`min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden ${
+      darkMode ? 'bg-zinc-950 text-zinc-100' : 'bg-zinc-50 text-zinc-900'
     }`}>
-      <div className="w-full max-w-md">
-        <div className="mb-10 text-center">
-          <h1 className={`mt-6 text-3xl font-extrabold manrope-font ${darkMode ? 'text-zinc-100' : 'text-zinc-900'}`}>
-            Welcome Back
+      {/* Decorative Blur Elements */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-zinc-500/10 rounded-full blur-[120px]" />
+
+      <div className="w-full max-w-md relative z-10">
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl font-black tracking-tighter mb-3">
+            Structura
           </h1>
-          <p className={`text-sm mt-2 font-medium ${darkMode ? 'text-zinc-500' : 'text-zinc-600'}`}>
-            Sign in to continue your structured work
+          <p className={`text-[11px] font-black uppercase tracking-[0.2em] opacity-50 ${darkMode ? 'text-zinc-400' : 'text-zinc-500'}`}>
+            Intelligent Structured Core
           </p>
         </div>
 
-        <div className={`rounded-lg border p-8 shadow-sm ${
-          darkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'
+        <div className={`p-8 rounded-3xl border shadow-2xl backdrop-blur-xl ${
+          darkMode ? 'bg-zinc-950/50 border-zinc-800' : 'bg-white/90 border-zinc-100 shadow-zinc-200/50'
         }`}
         >
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
+            <div className="space-y-2">
+              <label className={`block text-[10px] font-black uppercase tracking-widest pl-1 ${
                 darkMode ? 'text-zinc-500' : 'text-zinc-400'
               }`}>
-                Username
+                Identity
               </label>
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
-                  <User size={18} weight="bold" />
-                </div>
+              <div className="relative group">
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className={`w-full pl-11 pr-4 py-3 text-sm font-medium rounded-lg border outline-none transition-all ${
+                  className={`w-full px-5 py-4 text-sm font-bold rounded-2xl border outline-none transition-all ${
                     darkMode
-                      ? 'bg-zinc-800/50 border-zinc-700 text-white placeholder-zinc-600 focus:border-white'
-                      : 'bg-zinc-50 border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:border-zinc-900'
+                      ? 'bg-zinc-900/50 border-zinc-800 text-white placeholder-zinc-700 focus:border-blue-500/50 focus:bg-zinc-900'
+                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-blue-500/30 focus:bg-white'
                   }`}
-                  placeholder="nilshellwig"
+                  placeholder="Username"
                   required
                 />
               </div>
             </div>
 
-            <div>
-              <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
+            <div className="space-y-2">
+              <label className={`block text-[10px] font-black uppercase tracking-widest pl-1 ${
                 darkMode ? 'text-zinc-500' : 'text-zinc-400'
               }`}>
-                Password
+                Access Key
               </label>
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
-                  <LockKey size={18} weight="bold" />
-                </div>
+              <div className="relative group">
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full pl-11 pr-4 py-3 text-sm font-medium rounded-lg border outline-none transition-all ${
+                  className={`w-full px-5 py-4 text-sm font-bold rounded-2xl border outline-none transition-all ${
                     darkMode
-                      ? 'bg-zinc-800/50 border-zinc-700 text-white placeholder-zinc-600 focus:border-white'
-                      : 'bg-zinc-50 border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:border-zinc-900'
+                      ? 'bg-zinc-900/50 border-zinc-800 text-white placeholder-zinc-700 focus:border-blue-500/50 focus:bg-zinc-900'
+                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-blue-500/30 focus:bg-white'
                   }`}
                   placeholder="••••••••"
                   required
@@ -104,27 +102,27 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-sm ${
+              className={`w-full py-4 px-6 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${
                 loading
-                  ? 'bg-zinc-800 cursor-not-allowed text-zinc-500'
+                  ? 'opacity-50 cursor-not-allowed'
                   : darkMode
-                    ? 'bg-zinc-100 hover:bg-white text-zinc-900 active:scale-[0.98]'
-                    : 'bg-zinc-900 hover:bg-zinc-800 text-white active:scale-[0.98]'
+                    ? 'bg-white text-zinc-900 hover:bg-zinc-200 shadow-xl shadow-white/5'
+                    : 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-xl shadow-zinc-900/10'
               }`}
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Authenticating...' : 'Sign In'}
               {!loading && <ArrowRight size={18} weight="bold" />}
             </button>
           </form>
         </div>
 
-        <p className={`mt-8 text-center text-sm font-medium ${darkMode ? 'text-zinc-500' : 'text-zinc-600'}`}>
+        <p className={`mt-8 text-center text-[10px] font-black uppercase tracking-widest ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>
           No account?{' '}
           <Link
             to="/register"
-            className={`${darkMode ? 'text-zinc-100' : 'text-zinc-900'} hover:underline font-bold ml-1`}
+            className={`${darkMode ? 'text-zinc-100 hover:text-blue-400' : 'text-zinc-900 hover:text-blue-600'} transition-colors ml-2`}
           >
-            Create one for free
+            Create Account
           </Link>
         </p>
       </div>

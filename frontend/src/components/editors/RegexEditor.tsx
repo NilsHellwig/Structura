@@ -41,7 +41,7 @@ export default function RegexEditor() {
   const validateRegex = (value: string) => {
     if (!value) {
       setIsValid(false);
-      setError('Regex darf nicht leer sein');
+      setError('Regex pattern cannot be empty');
       return;
     }
     try {
@@ -49,7 +49,7 @@ export default function RegexEditor() {
       
       if (value.includes('(?<') || value.includes('(?!') || value.includes('(?=')) {
         setIsValid(false);
-        setError('Lookbehind und Lookahead sind nicht erlaubt');
+        setError('Lookbehind and Lookahead are not permitted');
         return;
       }
       
@@ -90,7 +90,7 @@ export default function RegexEditor() {
       setActivePatternId(null);
       loadSavedPatterns();
     } catch (error: any) {
-      alert(error.response?.data?.detail || 'Fehler beim Speichern');
+      alert(error.response?.data?.detail || 'Error saving pattern');
     }
   };
 
@@ -107,191 +107,175 @@ export default function RegexEditor() {
   };
 
   const deletePattern = async (id: number) => {
-    if (!confirm('Pattern löschen?')) return;
+    if (!confirm('Delete pattern?')) return;
 
     try {
       await api.delete(`/formats/regex/${id}`);
       loadSavedPatterns();
     } catch (error: any) {
-      alert(error.response?.data?.detail || 'Fehler beim Löschen');
+      alert(error.response?.data?.detail || 'Error deleting pattern');
     }
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="space-y-4">
+    <div className="p-8 space-y-10">
+      <div className="space-y-6">
         <div>
-          <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
+          <label className={`block text-[10px] font-black uppercase tracking-[0.2em] mb-4 ${
             darkMode ? 'text-zinc-500' : 'text-zinc-400'
           }`}>
             Regex Pattern
           </label>
-          <div className="relative">
+          <div className="relative group">
             <input
               type="text"
               value={regex}
               onChange={(e) => setRegex(e.target.value)}
-              className={`w-full px-4 py-3 font-mono text-sm rounded-xl border transition-all outline-none ${
+              className={`w-full px-6 py-5 font-mono text-sm rounded-3xl border transition-all outline-none ${
                 darkMode
-                  ? `bg-zinc-950 border-zinc-800 focus:border-zinc-600 ${!isValid ? 'border-red-900 focus:border-red-800' : ''}`
-                  : `bg-zinc-50 border-zinc-200 focus:border-zinc-400 ${!isValid ? 'border-red-300 focus:border-red-400' : ''}`
-              }`}
+                  ? `bg-zinc-950 border-zinc-900 focus:border-zinc-700 focus:bg-zinc-900/50 text-zinc-300`
+                  : `bg-zinc-50 border-zinc-100 focus:border-zinc-300 focus:bg-white text-zinc-900`
+              } ${!isValid ? 'border-red-500/50 focus:border-red-500' : ''}`}
               placeholder="[A-Za-z0-9]+"
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <div className="absolute right-6 top-1/2 -translate-y-1/2">
               {isValid ? (
-                <CheckCircle size={18} weight="fill" className="text-green-500" />
+                <CheckCircle size={20} weight="fill" className="text-green-500 shadow-lg shadow-green-500/20" />
               ) : (
-                <Warning size={18} weight="fill" className="text-red-500" />
+                <Warning size={20} weight="fill" className="text-red-500 shadow-lg shadow-red-500/20" />
               )}
             </div>
           </div>
           {error && (
-            <p className="text-[11px] font-bold text-red-500 mt-1.5 ml-1 uppercase tracking-tight">
+            <p className="text-[10px] font-black uppercase tracking-widest text-red-500 mt-3 ml-2">
               {error}
             </p>
           )}
         </div>
 
         <div>
-          <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${
+          <label className={`block text-[10px] font-black uppercase tracking-[0.2em] mb-4 ${
             darkMode ? 'text-zinc-500' : 'text-zinc-400'
           }`}>
-            Test String
+            Logic Validation
           </label>
           <input
             type="text"
             value={testString}
             onChange={(e) => setTestString(e.target.value)}
-            className={`w-full px-4 py-3 text-sm rounded-xl border transition-all outline-none ${
+            className={`w-full px-6 py-5 text-[11px] font-black uppercase tracking-widest rounded-3xl border transition-all outline-none ${
               darkMode
-                ? `bg-zinc-950 border-zinc-800 focus:border-zinc-600 ${testString && isValid ? (matches ? 'border-green-900' : 'border-red-900') : ''}`
-                : `bg-zinc-50 border-zinc-200 focus:border-zinc-400 ${testString && isValid ? (matches ? 'border-green-200' : 'border-red-200') : ''}`
+                ? `bg-zinc-950 border-zinc-900 focus:border-zinc-700 focus:bg-zinc-900/50 ${testString && isValid ? (matches ? 'border-green-800' : 'border-red-800') : ''}`
+                : `bg-zinc-50 border-zinc-100 focus:border-zinc-300 focus:bg-white ${testString && isValid ? (matches ? 'border-green-200' : 'border-red-200') : ''}`
             }`}
-            placeholder="Kompilierten Regex testen..."
+            placeholder="TEST STRING CORE..."
           />
           {testString && isValid && (
-            <div className={`flex items-center gap-1.5 mt-2 ml-1 ${
-              matches ? 'text-green-500' : 'text-red-500'
-            }`}>
-              <div className={`w-1.5 h-1.5 rounded-full ${matches ? 'bg-green-500' : 'bg-red-500'}`} />
-              <span className="text-[11px] font-bold uppercase tracking-tight">
-                {matches ? 'Matcht successfully' : 'Kein Match'}
+            <div className={`flex items-center gap-2.5 mt-4 ml-2 animate-in fade-in slide-in-from-left-2 duration-300`}>
+              <div className={`w-2 h-2 rounded-full ${matches ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]'}`} />
+              <span className={`text-[10px] font-black uppercase tracking-widest ${matches ? 'text-green-500' : 'text-red-500'}`}>
+                {matches ? 'Validation Successful' : 'Core Mismatch'}
               </span>
             </div>
           )}
         </div>
       </div>
 
-      <div className={`p-4 rounded-xl border flex gap-3 ${
-        darkMode ? 'bg-zinc-900/50 border-zinc-800 text-zinc-400' : 'bg-zinc-50 border-zinc-200 text-zinc-500'
+      <div className={`p-6 rounded-3xl border flex gap-4 backdrop-blur-xl ${
+        darkMode ? 'bg-zinc-900/40 border-zinc-800 text-zinc-400' : 'bg-zinc-50 border-zinc-100 text-zinc-500 shadow-sm'
       }`}>
-        <Info size={20} className="flex-shrink-0 opacity-50" />
+        <Info size={24} weight="fill" className="flex-shrink-0 opacity-40 text-blue-500" />
         <div className="space-y-1">
-          <p className="text-xs font-bold uppercase tracking-wider text-zinc-100 italic">Hinweis</p>
-          <p className="text-xs leading-relaxed">
-            Lookbehind <code className="font-mono text-[10px] bg-black/20 px-1 rounded">(?&lt;...)</code> und Lookahead <code className="font-mono text-[10px] bg-black/20 px-1 rounded">(?=...)</code> werden von vLLM nicht unterstützt.
+          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-500">Core Architecture Warning</p>
+          <p className="text-[10px] font-bold leading-relaxed opacity-70">
+            Lookbehind <code className="font-mono bg-black/20 px-1.5 py-0.5 rounded-lg text-white">(?&lt;...)</code> and Lookahead <code className="font-mono bg-black/20 px-1.5 py-0.5 rounded-lg text-white">(?=...)</code> are not supported by the vLLM structured engine.
           </p>
         </div>
       </div>
 
-      <div className="space-y-3 pt-2 border-t dark:border-zinc-800">
-        <label className={`block text-xs font-bold uppercase tracking-wider ${
-          darkMode ? 'text-zinc-500' : 'text-zinc-400'
-        }`}>
-          Pattern speichern
-        </label>
-        <div className="flex gap-2">
+      <div className={`pt-10 border-t ${darkMode ? 'border-zinc-900' : 'border-zinc-100'}`}>
+        <div className="flex gap-4">
           <button
             onClick={resetEditor}
-            className={`px-3 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
+            className={`h-14 px-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-95 ${
               darkMode 
-                ? 'bg-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' 
-                : 'bg-zinc-100 text-zinc-500 hover:text-zinc-700 hover:bg-zinc-200'
+                ? 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-white hover:border-zinc-700 hover:bg-zinc-800' 
+                : 'bg-zinc-100 text-zinc-500 border border-zinc-200 hover:text-zinc-900 hover:border-zinc-300 hover:bg-zinc-200'
             }`}
           >
-            <Plus size={14} weight="bold" />
-            Neu
+            <Plus size={18} weight="bold" />
           </button>
           <input
             type="text"
             value={saveName}
             onChange={(e) => setSaveName(e.target.value)}
-            placeholder="Name vergeben..."
-            className={`flex-1 px-4 py-3 text-sm rounded-xl border transition-all outline-none ${
+            placeholder="ARTIFACT IDENTITY..."
+            className={`flex-1 h-14 px-6 text-[11px] font-black uppercase tracking-[0.1em] rounded-2xl border transition-all outline-none ${
               darkMode
-                ? 'bg-zinc-950 border-zinc-800 focus:border-zinc-600'
-                : 'bg-zinc-50 border-zinc-200 focus:border-zinc-400'
+                ? 'bg-zinc-950 border-zinc-800 focus:border-zinc-600 focus:bg-white focus:text-zinc-950 text-zinc-300'
+                : 'bg-zinc-50 border-zinc-100 focus:border-zinc-300 focus:bg-white text-zinc-900'
             }`}
           />
           <button
             onClick={savePattern}
             disabled={!isValid || !saveName.trim()}
-            className={`px-5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-sm active:scale-[0.98] disabled:opacity-30 disabled:grayscale ${
+            className={`h-14 px-8 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 transition-all active:scale-[0.98] disabled:opacity-20 disabled:grayscale shadow-xl ${
               darkMode 
-                ? 'bg-zinc-100 text-zinc-900 hover:bg-white' 
-                : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                ? 'bg-white text-zinc-950 hover:bg-zinc-200 shadow-zinc-950/20' 
+                : 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-zinc-900/20'
             }`}
           >
-            <FloppyDisk size={18} weight="bold" />
-            {activePatternId ? 'Update' : 'Save'}
+            <FloppyDisk size={20} weight="bold" />
+            {activePatternId ? 'Update' : 'Commit'}
           </button>
         </div>
       </div>
 
-      <div className="space-y-4">
-        <label className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${
+      <div className="space-y-6">
+        <label className={`flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] ${
           darkMode ? 'text-zinc-600' : 'text-zinc-400'
         }`}>
-          <FolderOpen size={14} weight="bold" />
-          Pattern Library
+          <FolderOpen size={16} weight="bold" />
+          Artifact Library
         </label>
         
-        <div className="grid grid-cols-1 gap-2">
+        <div className="space-y-3">
           {savedPatterns.map((p) => (
             <div
               key={p.id}
-              className={`group flex items-center justify-between p-4 rounded-xl border transition-all ${
+              onClick={() => loadPattern(p)}
+              className={`group flex items-center justify-between p-5 rounded-2xl border transition-all cursor-pointer ${
                 darkMode
-                  ? 'bg-zinc-950 border-zinc-800 hover:border-zinc-700'
-                  : 'bg-white border-zinc-200 hover:border-zinc-300'
-              }`}
+                  ? 'bg-zinc-950 border-zinc-900 hover:border-zinc-700 hover:bg-zinc-900/50'
+                  : 'bg-white border-zinc-100 hover:border-zinc-200 hover:shadow-xl shadow-sm shadow-zinc-200/20'
+              } ${activePatternId === p.id ? 'ring-2 ring-blue-500/50 shadow-blue-500/10' : ''}`}
             >
-              <div className="flex-1 min-w-0 pr-4">
-                <div className={`text-sm font-bold truncate ${darkMode ? 'text-zinc-200' : 'text-zinc-800'}`}>
+              <div className="flex-1 min-w-0 pr-6">
+                <div className={`text-[11px] font-black uppercase tracking-widest truncate ${darkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>
                   {p.name}
                 </div>
-                <div className={`text-[11px] truncate mt-1 font-mono ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                <div className={`text-[9px] font-mono truncate mt-1.5 opacity-40 ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>
                   {p.pattern}
                 </div>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-3">
                 <button
-                  onClick={() => loadPattern(p)}
-                  className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${
-                    darkMode
-                      ? 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                      : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                  onClick={(e) => { e.stopPropagation(); deletePattern(p.id); }}
+                  className={`p-2.5 rounded-xl opacity-0 group-hover:opacity-100 transition-all ${
+                    darkMode ? 'hover:bg-red-900/40 text-red-400' : 'hover:bg-red-50 text-red-600 shadow-sm border border-red-100'
                   }`}
                 >
-                  Load
-                </button>
-                <button
-                  onClick={() => deletePattern(p.id)}
-                  className={`p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all ${
-                    darkMode ? 'hover:bg-red-900/40 text-red-400' : 'hover:bg-red-50 text-red-600'
-                  }`}
-                >
-                  <Trash size={16} weight="bold" />
+                  <Trash size={18} weight="bold" />
                 </button>
               </div>
             </div>
           ))}
           {savedPatterns.length === 0 && (
-            <div className={`text-center p-8 rounded-2xl border-2 border-dashed ${
-              darkMode ? 'border-zinc-800 text-zinc-600' : 'border-zinc-100 text-zinc-400'
+            <div className={`p-12 text-center rounded-3xl border-2 border-dashed ${
+              darkMode ? 'border-zinc-900 text-zinc-700' : 'border-zinc-100 text-zinc-300'
             }`}>
-              <p className="text-sm">Keine Patterns gespeichert.</p>
+              <Info size={32} weight="light" className="mx-auto mb-4 opacity-20" />
+              <p className="text-[10px] font-black uppercase tracking-[0.2em]">No patterns found in local core.</p>
             </div>
           )}
         </div>

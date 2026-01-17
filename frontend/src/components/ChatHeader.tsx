@@ -14,13 +14,17 @@ export default function ChatHeader() {
 
   return (
     <>
-      <div className={`border-b ${
-        darkMode ? 'border-zinc-800 bg-zinc-950 shadow-sm' : 'border-zinc-200 bg-white shadow-sm'
-      }`}>
-        <div className="w-full px-4 py-2.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-5xl">
+        <div className={`rounded-2xl border flex items-center justify-between gap-3 px-4 py-2 backdrop-blur-md shadow-lg ${
+          darkMode 
+            ? 'bg-zinc-950/80 border-zinc-800' 
+            : 'bg-white/90 border-zinc-100 shadow-zinc-200/50'
+        }`}>
+          <div className="flex items-center gap-1.5 grayscale-[0.5]">
             <BackendSelector />
+            <div className={`h-4 w-[1px] ${darkMode ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
             <ModelSelector />
+            <div className={`h-4 w-[1px] ${darkMode ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
             <FormatSelector />
             <FormatEditorModal />
           </div>
@@ -28,17 +32,18 @@ export default function ChatHeader() {
           <Tooltip content="LLM Parameters">
             <button
               onClick={() => setShowModal(true)}
-              className={`p-2 w-10 h-10 flex items-center justify-center rounded-lg transition-all ${
+              className={`p-2 w-9 h-9 flex items-center justify-center rounded-xl transition-all ${
                 darkMode
-                  ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-100 border'
-                  : 'bg-white border-zinc-200 text-zinc-500 hover:text-zinc-900 border shadow-sm'
+                  ? 'text-zinc-500 hover:text-blue-400 hover:bg-zinc-800'
+                  : 'text-zinc-400 hover:text-blue-600 hover:bg-zinc-100'
               }`}
             >
-              <Gear size={20} weight="bold" />
+              <Gear size={18} weight="bold" />
             </button>
           </Tooltip>
         </div>
       </div>
+      <div className="h-20 flex-shrink-0" /> {/* Spacer for the floating header */}
       {showModal && <LLMParametersModal onClose={() => setShowModal(false)} />}
     </>
   );

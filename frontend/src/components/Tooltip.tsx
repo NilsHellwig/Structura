@@ -20,16 +20,16 @@ export default function Tooltip({ content, children, side = 'top' }: TooltipProp
         <TooltipPrimitive.Portal>
           <TooltipPrimitive.Content
             side={side}
-            sideOffset={5}
-            className={`z-50 px-3 py-1.5 text-xs font-medium rounded-md shadow-lg animate-in fade-in-0 zoom-in-95 ${
+            sideOffset={8}
+            className={`z-[200] px-3 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl shadow-2xl animate-in fade-in zoom-in duration-200 backdrop-blur-xl ${
               darkMode
-                ? 'bg-gray-800 text-gray-100 border border-gray-700'
-                : 'bg-gray-900 text-white'
+                ? 'bg-zinc-950/90 text-zinc-100 border border-white/10'
+                : 'bg-white/95 text-black border border-zinc-200 shadow-zinc-200/50'
             }`}
           >
             {content}
             <TooltipPrimitive.Arrow
-              className={darkMode ? 'fill-gray-800' : 'fill-gray-900'}
+              className={darkMode ? 'fill-white/10' : 'fill-zinc-200'}
             />
           </TooltipPrimitive.Content>
         </TooltipPrimitive.Portal>

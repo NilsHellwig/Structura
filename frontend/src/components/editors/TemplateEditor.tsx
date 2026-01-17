@@ -8,7 +8,7 @@ import api from '../../lib/api';
 export default function TemplateEditor() {
   const darkMode = useUIStore((state) => state.darkMode);
   const { formatSpec, setFormatSpec } = useChatStore();
-  const [template, setTemplate] = useState(formatSpec || 'Hallo, mein Name ist [GEN]');
+  const [template, setTemplate] = useState(formatSpec || 'Hello, my name is [GEN]');
   const [savedTemplates, setSavedTemplates] = useState<Template[]>([]);
   const [saveName, setSaveName] = useState('');
   const [activeTemplateId, setActiveTemplateId] = useState<number | null>(null);
@@ -47,7 +47,7 @@ export default function TemplateEditor() {
       }
       loadSavedTemplates();
     } catch (error: any) {
-      alert(error.response?.data?.detail || 'Fehler beim Speichern');
+      alert(error.response?.data?.detail || 'Error saving template');
     }
   };
 
@@ -58,41 +58,41 @@ export default function TemplateEditor() {
   };
 
   const resetEditor = () => {
-    setTemplate('Hallo, mein Name ist [GEN]');
+    setTemplate('Hello, my name is [GEN]');
     setSaveName('');
     setActiveTemplateId(null);
   };
 
   const deleteTemplate = async (id: number) => {
-    if (!confirm('Template löschen?')) return;
+    if (!confirm('Delete template?')) return;
 
     try {
       await api.delete(`/formats/templates/${id}`);
       loadSavedTemplates();
     } catch (error: any) {
-      alert(error.response?.data?.detail || 'Fehler beim Löschen');
+      alert(error.response?.data?.detail || 'Error deleting template');
     }
   };
 
   const genCount = (template.match(/\[GEN\]/g) || []).length;
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-8 space-y-10">
       {/* Input Section */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <label className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${
+          <label className={`flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] ${
             darkMode ? 'text-zinc-500' : 'text-zinc-400'
           }`}>
-            <TextT size={14} weight="bold" />
+            <TextT size={16} weight="bold" />
             Template Definition
           </label>
-          <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-tight ${
+          <div className={`px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${
             genCount > 0 
-              ? darkMode ? 'bg-zinc-800 text-zinc-400' : 'bg-zinc-100 text-zinc-500'
-              : 'bg-red-500/10 text-red-500'
+              ? darkMode ? 'bg-zinc-900 border-zinc-800 text-blue-400' : 'bg-zinc-50 border-zinc-100 text-blue-600'
+              : 'bg-red-500/10 text-red-500 border-red-500/20'
           }`}>
-            {genCount} Slots
+            {genCount} ACTIVE SLOTS
           </div>
         </div>
         
@@ -100,47 +100,47 @@ export default function TemplateEditor() {
           <textarea
             value={template}
             onChange={(e) => setTemplate(e.target.value)}
-            className={`w-full px-5 py-4 font-mono text-[13px] rounded-2xl border transition-all outline-none min-h-[160px] leading-relaxed resize-none ${
+            className={`w-full px-6 py-5 font-mono text-[13px] rounded-3xl border transition-all outline-none min-h-[180px] leading-relaxed resize-none ${
               darkMode
-                ? 'bg-zinc-950 border-zinc-800 focus:border-zinc-600 focus:bg-zinc-900/50'
-                : 'bg-zinc-50 border-zinc-200 focus:border-zinc-400 focus:bg-white focus:shadow-sm'
+                ? 'bg-zinc-950 border-zinc-900 focus:border-zinc-700 focus:bg-zinc-900/50 text-zinc-300'
+                : 'bg-zinc-50 border-zinc-100 focus:border-zinc-300 focus:bg-white text-zinc-900'
             }`}
-            placeholder="Hallo, mein Name ist [GEN]..."
+            placeholder="Hello, my name is [GEN]..."
           />
-          <div className={`absolute bottom-3 right-4 flex items-center gap-2 pointer-events-none transition-opacity duration-300 ${
-            template.includes('[GEN]') ? 'opacity-40' : 'opacity-100'
+          <div className={`absolute bottom-5 right-6 flex items-center gap-2 pointer-events-none transition-opacity duration-300 ${
+            template.includes('[GEN]') ? 'opacity-30' : 'opacity-80'
           }`}>
-            <Info size={14} />
-            <span className="text-[10px] font-bold uppercase tracking-tighter">
-              Use [GEN] as placeholder
+            <Info size={14} weight="bold" className="text-blue-500" />
+            <span className="text-[10px] font-black uppercase tracking-widest">
+              Insert [GEN] pattern
             </span>
           </div>
         </div>
       </div>
 
       {/* Preview Section */}
-      <div className="space-y-4">
-        <label className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${
+      <div className="space-y-6">
+        <label className={`flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] ${
           darkMode ? 'text-zinc-500' : 'text-zinc-400'
         }`}>
-          <Code size={14} weight="bold" />
-          Live Preview
+          <Code size={16} weight="bold" />
+          Artifact Rendering
         </label>
         
-        <div className={`p-6 rounded-2xl border-2 border-dashed transition-all ${
+        <div className={`p-8 rounded-3xl border-2 border-dashed transition-all ${
           darkMode 
-            ? 'bg-zinc-900/20 border-zinc-800 text-zinc-300' 
-            : 'bg-zinc-50/50 border-zinc-200 text-zinc-600'
+            ? 'bg-zinc-900/20 border-zinc-800 text-zinc-300 shadow-[inset_0_2px_20px_rgba(0,0,0,0.2)]' 
+            : 'bg-zinc-50 border-zinc-200 text-zinc-600 shadow-[inset_0_2px_20px_rgba(0,0,0,0.03)]'
         }`}>
-          <div className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium">
+          <div className="text-[15px] leading-relaxed whitespace-pre-wrap font-bold">
             {template.split('[GEN]').map((part, i, arr) => (
               <span key={i}>
                 {part}
                 {i < arr.length - 1 && (
-                  <span className={`inline-flex items-center px-2 py-0.5 mx-0.5 rounded-md text-[10px] font-black tracking-tighter shadow-sm transform -rotate-1 ${
-                    darkMode ? 'bg-zinc-100 text-zinc-950' : 'bg-zinc-900 text-white'
+                  <span className={`inline-flex items-center px-3 py-1 mx-1 rounded-xl text-[9px] font-black tracking-widest shadow-lg transform -rotate-1 ${
+                    darkMode ? 'bg-white text-zinc-950' : 'bg-zinc-900 text-white'
                   }`}>
-                    SLOT
+                    SLOT_IDENTIFIER
                   </span>
                 )}
               </span>
@@ -150,97 +150,82 @@ export default function TemplateEditor() {
       </div>
 
       {/* Save Section */}
-      <div className={`pt-8 border-t ${darkMode ? 'border-zinc-800' : 'border-zinc-200'}`}>
-        <div className="flex gap-3">
+      <div className={`pt-10 border-t ${darkMode ? 'border-zinc-900' : 'border-zinc-100'}`}>
+        <div className="flex gap-4">
           <button
             onClick={resetEditor}
-            className={`h-11 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all ${
+            className={`h-14 px-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-95 ${
               darkMode 
-                ? 'bg-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' 
-                : 'bg-zinc-100 text-zinc-500 hover:text-zinc-700 hover:bg-zinc-200'
+                ? 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-white hover:border-zinc-700 hover:bg-zinc-800' 
+                : 'bg-zinc-100 text-zinc-500 border border-zinc-200 hover:text-zinc-900 hover:border-zinc-300 hover:bg-zinc-200'
             }`}
           >
-            <Plus size={16} weight="bold" />
-            New
+            <Plus size={18} weight="bold" />
           </button>
           <div className="flex-1 relative">
             <input
               type="text"
               value={saveName}
               onChange={(e) => setSaveName(e.target.value)}
-              placeholder="Name for this template..."
-              className={`w-full h-11 px-4 text-sm rounded-xl border transition-all outline-none ${
+              placeholder="PRESET IDENTITY..."
+              className={`w-full h-14 px-6 text-[11px] font-black uppercase tracking-[0.1em] rounded-2xl border transition-all outline-none ${
                 darkMode
-                  ? 'bg-zinc-950 border-zinc-800 focus:border-zinc-600'
-                  : 'bg-zinc-50 border-zinc-200 focus:border-zinc-400'
+                  ? 'bg-zinc-950 border-zinc-800 focus:border-zinc-600 focus:bg-white focus:text-zinc-950 text-zinc-300'
+                  : 'bg-zinc-50 border-zinc-100 focus:border-zinc-300 focus:bg-white text-zinc-900'
               }`}
             />
           </div>
           <button
             onClick={saveTemplate}
             disabled={!saveName.trim() || genCount === 0}
-            className={`h-11 px-6 rounded-xl font-bold text-sm flex items-center gap-2 transition-all disabled:opacity-30 disabled:grayscale ${
+            className={`h-14 px-8 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 transition-all active:scale-[0.98] disabled:opacity-20 disabled:grayscale shadow-xl ${
               darkMode 
-                ? 'bg-zinc-100 text-zinc-900 hover:bg-white' 
-                : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                ? 'bg-white text-zinc-950 hover:bg-zinc-200' 
+                : 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-zinc-900/10'
             }`}
           >
-            <FloppyDisk size={18} weight="bold" />
-            {activeTemplateId ? 'Update Preset' : 'Save Preset'}
+            <FloppyDisk size={20} weight="bold" />
+            {activeTemplateId ? 'Update' : 'Commit'}
           </button>
         </div>
       </div>
 
       {/* Library Section */}
       {savedTemplates.length > 0 && (
-        <div className="space-y-4">
-          <label className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${
+        <div className="space-y-6">
+          <label className={`flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] ${
             darkMode ? 'text-zinc-600' : 'text-zinc-400'
           }`}>
-            <FolderOpen size={14} weight="bold" />
-            Template Library
+            <FolderOpen size={16} weight="bold" />
+            Artifact Library
           </label>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="space-y-3">
             {savedTemplates.map((t) => (
               <div
                 key={t.id}
-                className={`group flex items-center justify-between p-4 rounded-xl border transition-all ${
+                onClick={() => loadTemplate(t)}
+                className={`group flex items-center justify-between p-5 rounded-3xl border transition-all cursor-pointer ${
                   darkMode
-                    ? 'bg-zinc-950 border-zinc-800 hover:border-zinc-700'
-                    : 'bg-white border-zinc-200 hover:border-zinc-300 hover:shadow-sm'
-                }`}
+                    ? 'bg-zinc-950 border-zinc-900 hover:border-zinc-700 hover:bg-zinc-900/50'
+                    : 'bg-white border-zinc-100 hover:border-zinc-200 hover:shadow-xl shadow-sm shadow-zinc-200/20'
+                } ${activeTemplateId === t.id ? 'ring-2 ring-blue-500/50' : ''}`}
               >
-                <button
-                  onClick={() => loadTemplate(t)}
-                  className={`flex-1 text-left px-1 py-1 rounded-lg transition-colors ${
-                    darkMode ? 'hover:bg-zinc-900' : 'hover:bg-zinc-50'
-                  }`}
-                >
-                  <div className={`text-sm font-bold ${darkMode ? 'text-zinc-200' : 'text-zinc-800'}`}>
+                <div className="flex-1 min-w-0 pr-6">
+                  <div className={`text-[11px] font-black uppercase tracking-widest truncate ${darkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>
                     {t.name}
                   </div>
-                  <div className={`text-[11px] truncate mt-0.5 max-w-[200px] ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                  <div className={`text-[9px] font-mono truncate mt-1.5 opacity-40 ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>
                     {t.content}
                   </div>
-                </button>
-                <div className="flex items-center gap-1">
+                </div>
+                <div className="flex items-center gap-3">
                   <button
-                    onClick={() => loadTemplate(t)}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${
-                      darkMode
-                        ? 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                        : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                    onClick={(e) => { e.stopPropagation(); deleteTemplate(t.id); }}
+                    className={`p-2.5 rounded-xl opacity-0 group-hover:opacity-100 transition-all ${
+                      darkMode ? 'hover:bg-red-900/40 text-red-400' : 'hover:bg-red-50 text-red-600 shadow-sm border border-red-100'
                     }`}
                   >
-                    Load
-                  </button>
-                  <button
-                    onClick={() => deleteTemplate(t.id)}
-                    className={`p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all ${
-                      darkMode ? 'hover:bg-red-900/40 text-red-400' : 'hover:bg-red-50 text-red-600'
-                    }`}
-                  >
-                    <Trash size={16} weight="bold" />
+                    <Trash size={18} weight="bold" />
                   </button>
                 </div>
               </div>

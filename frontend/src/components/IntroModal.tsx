@@ -33,7 +33,7 @@ export default function IntroModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-zinc-950/40 backdrop-blur-xl z-50"
           />
 
           {/* Modal */}
@@ -42,67 +42,62 @@ export default function IntroModal() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: 'spring', duration: 0.5 }}
-              className={`relative w-full max-w-2xl rounded-lg shadow-2xl pointer-events-auto overflow-hidden ${
-                darkMode ? 'bg-zinc-950 border border-zinc-800' : 'bg-white border border-zinc-200'
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className={`relative w-full max-w-2xl rounded-[2.5rem] shadow-2xl pointer-events-auto overflow-hidden ${
+                darkMode 
+                  ? 'bg-zinc-950 border border-white/10' 
+                  : 'bg-white border border-zinc-200 shadow-zinc-200/50'
               }`}
             >
               {/* Header */}
-              <div className="relative px-8 py-8">
+              <div className="relative px-10 pt-12 pb-8">
                 <div className="relative flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <motion.div
-                      animate={{ rotate: [0, 360] }}
-                      transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-                      className={`w-14 h-14 rounded-lg flex items-center justify-center shadow-sm ${
-                        darkMode ? 'bg-zinc-900 text-zinc-100 border border-zinc-800' : 'bg-zinc-100 text-zinc-900'
-                      }`}
-                    >
-                      <Sparkle size={32} weight="fill" />
-                    </motion.div>
+                  <div className="flex items-center gap-6">
                     <div>
-                      <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-zinc-900'}`}>
-                        Welcome to Structura
+                      <h2 className={`text-4xl font-black tracking-[-0.05em] ${darkMode ? 'text-white' : 'text-zinc-900'}`}>
+                        Structura
                       </h2>
-                      <p className={`text-sm font-medium ${darkMode ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                        Your AI assistant with structured outputs
+                      <p className={`text-[10px] font-black uppercase tracking-[0.3em] opacity-40 ${darkMode ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                        V1.0
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={handleClose}
-                    className={`p-2 rounded-lg transition-all ${
+                    className={`p-3 rounded-2xl transition-all ${
                       darkMode 
-                        ? 'hover:bg-zinc-900 text-zinc-400' 
-                        : 'hover:bg-zinc-100 text-zinc-400'
+                        ? 'hover:bg-white/5 text-zinc-500 hover:text-white' 
+                        : 'hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900'
                     }`}
                   >
-                    <X size={20} weight="bold" />
+                    <X size={24} weight="bold" />
                   </button>
                 </div>
               </div>
 
               {/* Content */}
-              <div className={`px-8 py-6 space-y-4 max-h-[60vh] overflow-y-auto ${
-                darkMode ? 'text-zinc-200' : 'text-zinc-800'
+              <div className={`px-10 py-6 space-y-4 max-h-[60vh] overflow-y-auto ${
+                darkMode ? 'text-zinc-400' : 'text-zinc-600'
               }`}>
                 {/* Feature 1 */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="flex gap-4 p-4 rounded-lg"
+                  transition={{ delay: 0.1 }}
+                  className={`flex gap-6 p-6 rounded-[2rem] transition-all border border-transparent ${
+                    darkMode ? 'bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/5' : 'bg-zinc-50/50 hover:bg-zinc-100/50 hover:border-zinc-200/50'
+                  }`}
                 >
-                  <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${
-                    darkMode ? 'bg-zinc-900 text-zinc-100 border border-zinc-800' : 'bg-zinc-100 text-zinc-900'
+                  <div className={`w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center ${
+                    darkMode ? 'bg-zinc-900 border border-white/5' : 'bg-white border border-zinc-200/50 shadow-sm'
                   }`}>
-                    <Chat size={20} weight="fill" />
+                    <FileCode size={24} weight="fill" className="text-blue-500" />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold mb-1 tracking-tight">Multiple LLM Backends</h3>
-                    <p className={`text-sm leading-relaxed ${darkMode ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                      Choose between <strong>Ollama</strong>, <strong>OpenAI</strong>, or <strong>vLLM</strong>. 
-                      Select your preferred model from the dropdowns at the top.
+                  <div className="space-y-1">
+                    <h3 className={`text-sm font-black uppercase tracking-wider ${darkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>Structured Outputs</h3>
+                    <p className="text-xs leading-relaxed opacity-70">
+                      Design precise <strong>JSON Schemas</strong>, <strong>Regex Patterns</strong> or 
+                      <strong>Templates</strong> for structured responses.
                     </p>
                   </div>
                 </motion.div>
@@ -111,20 +106,21 @@ export default function IntroModal() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="flex gap-4 p-4 rounded-lg transition-colors"
+                  transition={{ delay: 0.2 }}
+                  className={`flex gap-6 p-6 rounded-[2rem] transition-all border border-transparent ${
+                    darkMode ? 'bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/5' : 'bg-zinc-50/50 hover:bg-zinc-100/50 hover:border-zinc-200/50'
+                  }`}
                 >
-                  <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${
-                    darkMode ? 'bg-zinc-900 text-zinc-100 border border-zinc-800' : 'bg-zinc-100 text-zinc-900'
+                  <div className={`w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center ${
+                    darkMode ? 'bg-zinc-900 border border-white/5' : 'bg-white border border-zinc-200/50 shadow-sm'
                   }`}>
-                    <FileCode size={20} weight="fill" />
+                    <Chat size={24} weight="fill" className="text-purple-500" />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold mb-1 tracking-tight">Structured Outputs</h3>
-                    <p className={`text-sm leading-relaxed ${darkMode ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                      Control output format: <strong>Default</strong>, <strong>JSON Schema</strong>, 
-                      <strong>Template</strong>, or <strong>Regex</strong>. 
-                      Define your format in the right panel.
+                  <div className="space-y-1">
+                    <h3 className={`text-sm font-black uppercase tracking-wider ${darkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>Advanced Workflows</h3>
+                    <p className="text-xs leading-relaxed opacity-70">
+                      Choose between <strong>vLLM</strong>, <strong>Ollama</strong> or <strong>OpenAI</strong> backends 
+                      tailored for your project.
                     </p>
                   </div>
                 </motion.div>
@@ -133,38 +129,38 @@ export default function IntroModal() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="flex gap-4 p-4 rounded-lg"
+                  transition={{ delay: 0.3 }}
+                  className={`flex gap-6 p-6 rounded-[2rem] transition-all border border-transparent ${
+                    darkMode ? 'bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/5' : 'bg-zinc-50/50 hover:bg-zinc-100/50 hover:border-zinc-200/50'
+                  }`}
                 >
-                  <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${
-                    darkMode ? 'bg-zinc-900 text-zinc-100 border border-zinc-800' : 'bg-zinc-100 text-zinc-900'
+                  <div className={`w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center ${
+                    darkMode ? 'bg-zinc-900 border border-white/5' : 'bg-white border border-zinc-200/50 shadow-sm'
                   }`}>
-                    <Gear size={20} weight="fill" />
+                    <Gear size={24} weight="fill" className="text-orange-500" />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold mb-1 tracking-tight">Fine-tune Parameters</h3>
-                    <p className={`text-sm leading-relaxed ${darkMode ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                      Adjust temperature, top-p, and other LLM parameters. 
-                      Settings are accessible via the gear icon in the header.
+                  <div className="space-y-1">
+                    <h3 className={`text-sm font-black uppercase tracking-wider ${darkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>Fine-tuning</h3>
+                    <p className="text-xs leading-relaxed opacity-70">
+                      Configure temperature and Top-P for maximum control over the creativity 
+                      of your model.
                     </p>
                   </div>
                 </motion.div>
               </div>
 
               {/* Footer */}
-              <div className={`px-8 py-6 flex justify-end border-t ${
-                darkMode ? 'border-zinc-800 bg-zinc-900/20' : 'bg-zinc-50 border-zinc-200'
-              }`}>
+              <div className="p-10">
                 <button
                   onClick={handleClose}
-                  className={`px-8 py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
-                    darkMode
-                      ? 'bg-zinc-100 text-zinc-900 hover:bg-white shadow-sm'
-                      : 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-sm'
+                  className={`group w-full h-16 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${
+                    darkMode 
+                      ? 'bg-white text-black hover:bg-zinc-200 shadow-xl shadow-white/5' 
+                      : 'bg-zinc-950 text-white hover:bg-zinc-800 shadow-xl shadow-black/10'
                   }`}
                 >
-                  Get Started
-                  <ArrowRight size={18} weight="bold" />
+                  <span className="text-sm font-black uppercase tracking-[0.2em]">Start Orchestrating</span>
+                  <ArrowRight size={20} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             </motion.div>

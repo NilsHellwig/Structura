@@ -105,10 +105,22 @@ async def generate_llm_response_stream(
         "stream": True,
     }
     
-    # Note: JSON Schema is technically only supported in non-streaming by OpenAI officially,
-    # but many providers support json_object in streaming.
+    # Handle structured output formats
     if output_format == OutputFormat.json and format_spec:
-        request_params["response_format"] = {"type": "json_object"}
+        try:
+            schema = json.loads(format_spec)
+            # OpenAI and newer local backends support 'json_schema' type
+            request_params["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "response",
+                    "schema": schema,
+                    "strict": True
+                }
+            }
+        except json.JSONDecodeError:
+            # Fallback to older response_format if it's not a valid schema
+            request_params["response_format"] = {"type": "json_object"}
 
     if backend == LLMBackend.vllm and output_format == OutputFormat.regex and format_spec:
         request_params["extra_body"] = {"guided_regex": format_spec}

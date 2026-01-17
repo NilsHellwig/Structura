@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Trash, PencilSimple, CaretLeft, Moon, SunDim, Question, SignOut } from 'phosphor-react';
+import { Plus, Trash, PencilSimple, CaretLeft, Moon, SunDim, SignOut, Sparkle, Question } from 'phosphor-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUIStore } from '../store/uiStore';
 import { useAuthStore } from '../store/authStore';
@@ -45,88 +45,93 @@ export default function Sidebar({
       {!sidebarCollapsed && (
         <motion.div
           initial={{ width: 0, opacity: 0 }}
-          animate={{ width: 280, opacity: 1 }}
+          animate={{ width: 300, opacity: 1 }}
           exit={{ width: 0, opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className={`flex-shrink-0 border-r flex flex-col ${
-            darkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-50 border-zinc-200'
+          className={`flex-shrink-0 border-r flex flex-col backdrop-blur-3xl ${
+            darkMode ? 'bg-zinc-950/50 border-zinc-800' : 'bg-zinc-50/80 border-zinc-100'
           }`}
         >
           {/* Header */}
-          <div className={`px-4 py-6 flex items-center justify-between`}>
-            <h1 className={`text-xl font-bold tracking-tight ${
-              darkMode ? 'text-zinc-100' : 'text-zinc-900'
-            }`}>
-              Structura
-            </h1>
-            <div className="flex items-center gap-0.5">
-              <Tooltip content="Help">
+          <div className="px-6 py-8 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className={`text-2xl font-black tracking-tight ${
+                darkMode ? 'text-zinc-100' : 'text-zinc-900'
+              }`}>
+                Structura
+              </h1>
+            </div>
+            <div className="flex items-center gap-1">
+              <Tooltip content="Information">
                 <button
                   onClick={() => setShowIntro(true)}
                   className={`p-1.5 rounded-lg transition-colors ${
                     darkMode
-                      ? 'hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100'
-                      : 'hover:bg-zinc-200 text-zinc-500 hover:text-zinc-900'
+                      ? 'text-zinc-500 hover:text-zinc-100 hover:bg-zinc-900/50'
+                      : 'text-zinc-400 hover:text-zinc-900 hover:bg-zinc-200/50'
                   }`}
                 >
                   <Question size={18} weight="bold" />
                 </button>
               </Tooltip>
-              <Tooltip content={darkMode ? 'Light Mode' : 'Dark Mode'}>
+              <Tooltip content={darkMode ? 'Light' : 'Dark'}>
                 <button
                   onClick={toggleDarkMode}
                   className={`p-1.5 rounded-lg transition-colors ${
                     darkMode
-                      ? 'hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100'
-                      : 'hover:bg-zinc-200 text-zinc-500 hover:text-zinc-900'
+                      ? 'text-zinc-500 hover:text-zinc-100 hover:bg-zinc-900/50'
+                      : 'text-zinc-400 hover:text-zinc-900 hover:bg-zinc-200/50'
                   }`}
                 >
-                  {darkMode ? <SunDim size={18} weight="bold" /> : <Moon size={18} weight="bold" />}
+                  {darkMode ? <SunDim size={18} weight="fill" /> : <Moon size={18} weight="fill" />}
                 </button>
               </Tooltip>
-              <Tooltip content="Collapse">
-                <button
-                  onClick={toggleSidebar}
-                  className={`p-1.5 rounded-lg transition-colors ${
-                    darkMode
-                      ? 'hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100'
-                      : 'hover:bg-zinc-200 text-zinc-500 hover:text-zinc-900'
-                  }`}
-                >
-                  <CaretLeft size={18} weight="bold" />
-                </button>
-              </Tooltip>
+              <button
+                onClick={toggleSidebar}
+                className={`p-1.5 rounded-lg transition-colors ${
+                  darkMode
+                    ? 'text-zinc-500 hover:text-zinc-100 hover:bg-zinc-900/50'
+                    : 'text-zinc-400 hover:text-zinc-900 hover:bg-zinc-200/50'
+                }`}
+              >
+                <CaretLeft size={18} weight="bold" />
+              </button>
             </div>
           </div>
 
           {/* New Chat Button */}
-          <div className="px-3 pb-4">
+          <div className="px-4 pb-6">
             <button
               onClick={onNewConversation}
-              className={`w-full px-4 py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all ${
+              className={`w-full px-4 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
                 darkMode
-                  ? 'bg-zinc-100 hover:bg-white text-zinc-900'
-                  : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border border-zinc-200 shadow-sm'
+                  ? 'bg-zinc-800 text-zinc-100 hover:bg-zinc-700 shadow-xl shadow-black/20'
+                  : 'bg-white text-zinc-900 hover:bg-zinc-50 shadow-lg shadow-zinc-200/50 border border-zinc-100'
               }`}
             >
-              <Plus size={18} weight="bold" />
-              New Chat
+              <Plus size={16} weight="bold" />
+              New Session
             </button>
           </div>
 
           {/* Conversations List */}
-          <div className="flex-1 overflow-y-auto px-2 py-2 space-y-0.5 no-scrollbar">
+          <div className="flex-1 overflow-y-auto px-4 py-2 space-y-1 no-scrollbar">
+            <div className={`text-[10px] font-black uppercase tracking-widest mb-4 opacity-30 px-2 ${
+              darkMode ? 'text-zinc-400' : 'text-zinc-500'
+            }`}>
+              Recent Sessions
+            </div>
             {conversations.map((conv) => (
               <div
                 key={conv.id}
-                className={`group relative rounded-lg transition-all ${
+                className={`group relative rounded-xl transition-all duration-200 ${
                   currentConversationId === conv.id
                     ? darkMode
-                      ? 'bg-zinc-800 text-zinc-100 shadow-sm'
-                      : 'bg-zinc-200 text-zinc-900 shadow-sm'
+                      ? 'bg-white text-zinc-900 shadow-xl shadow-white/5'
+                      : 'bg-zinc-900 text-white shadow-xl shadow-black/10'
                     : darkMode
-                    ? 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
-                    : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+                    ? 'text-zinc-500 hover:bg-zinc-900/50 hover:text-zinc-200'
+                    : 'text-zinc-500 hover:bg-zinc-200/50 hover:text-zinc-900'
                 }`}
               >
                 {editingId === conv.id ? (
@@ -140,25 +145,25 @@ export default function Sidebar({
                       if (e.key === 'Escape') setEditingId(null);
                     }}
                     autoFocus
-                    className={`w-full px-3 py-3 text-sm rounded-lg outline-none ${
+                    className={`w-full px-3 py-3 text-xs font-bold rounded-xl outline-none ${
                       darkMode
                         ? 'bg-zinc-800 text-white border border-zinc-700'
-                        : 'bg-white text-zinc-900 border border-zinc-300'
+                        : 'bg-white text-zinc-900 border border-zinc-200 shadow-inner'
                     }`}
                   />
                 ) : (
                   <div
                     onClick={() => onSelectConversation(conv.id)}
-                    className="w-full px-3 py-3 text-left text-sm flex items-center justify-between gap-2 cursor-pointer"
+                    className="w-full px-4 py-3.5 text-left text-xs flex items-center justify-between gap-3 cursor-pointer"
                   >
-                    <span className={`truncate flex-1 font-medium ${
+                    <span className={`truncate flex-1 font-bold tracking-tight ${
                       currentConversationId === conv.id
                         ? 'text-inherit'
                         : ''
                     }`}>
                       {conv.title}
                     </span>
-                    <div className={`flex items-center gap-0.5 transition-opacity ${
+                    <div className={`flex items-center gap-1 transition-all ${
                       currentConversationId === conv.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                     }`}>
                       <button
@@ -166,22 +171,26 @@ export default function Sidebar({
                           e.stopPropagation();
                           startEditing(conv.id, conv.title);
                         }}
-                        className={`p-1 rounded-md transition-colors ${
-                          darkMode ? 'hover:bg-zinc-700 text-zinc-400 hover:text-zinc-100' : 'hover:bg-zinc-200 text-zinc-500 hover:text-zinc-900'
+                        className={`p-1.5 rounded-lg transition-colors ${
+                          currentConversationId === conv.id
+                            ? darkMode ? 'hover:bg-zinc-100' : 'hover:bg-zinc-800'
+                            : darkMode ? 'hover:bg-zinc-800' : 'hover:bg-zinc-100'
                         }`}
                       >
-                        <PencilSimple size={14} />
+                        <PencilSimple size={14} weight="bold" />
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           onDeleteConversation(conv.id);
                         }}
-                        className={`p-1 rounded-md transition-colors ${
-                          darkMode ? 'hover:bg-red-900/40 text-zinc-400 hover:text-red-400' : 'hover:bg-red-100 text-zinc-500 hover:text-red-600'
+                        className={`p-1.5 rounded-lg transition-colors ${
+                          currentConversationId === conv.id
+                            ? darkMode ? 'hover:bg-red-50 text-red-600' : 'hover:bg-red-900 text-red-400'
+                            : darkMode ? 'hover:bg-red-900/50 text-red-400' : 'hover:bg-red-100 text-red-600'
                         }`}
                       >
-                        <Trash size={14} />
+                        <Trash size={14} weight="bold" />
                       </button>
                     </div>
                   </div>
@@ -191,32 +200,30 @@ export default function Sidebar({
           </div>
 
           {/* User Section / Footer */}
-          <div className={`p-4 border-t ${
-            darkMode ? 'border-zinc-800' : 'border-zinc-200'
+          <div className={`p-4 ${
+            darkMode ? 'bg-zinc-900/20' : 'bg-zinc-100/20'
           }`}>
-            <div className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
-              darkMode ? 'hover:bg-zinc-800' : 'hover:bg-zinc-100'
+            <div className={`flex items-center gap-3 p-3 rounded-2xl transition-all ${
+              darkMode ? 'hover:bg-zinc-900/50' : 'hover:bg-white border border-transparent hover:border-zinc-100 hover:shadow-sm'
             }`}>
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${
-                darkMode ? 'bg-zinc-700 text-white' : 'bg-zinc-900 text-white'
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-[10px] uppercase shadow-sm ${
+                darkMode ? 'bg-zinc-800 text-zinc-300' : 'bg-white text-zinc-600 border border-zinc-100'
               }`}>
-                {user?.username?.substring(0, 2).toUpperCase() || 'U'}
+                {user?.username?.substring(0, 2).toUpperCase() || 'US'}
               </div>
               <div className="flex-1 min-w-0">
-                <p className={`text-sm font-bold truncate ${
-                  darkMode ? 'text-zinc-100' : 'text-zinc-900'
-                }`}>
+                <div className={`text-xs font-black uppercase tracking-tight truncate ${darkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>
                   {user?.username || 'User'}
-                </p>
+                </div>
               </div>
-              <Tooltip content="Logout">
+              <Tooltip content="Sign Out">
                 <button
                   onClick={logout}
-                  className={`p-1.5 rounded-lg transition-colors ${
+                  className={`p-2 rounded-xl transition-all ${
                     darkMode ? 'text-zinc-500 hover:text-red-400 hover:bg-red-900/20' : 'text-zinc-400 hover:text-red-600 hover:bg-red-50'
                   }`}
                 >
-                  <SignOut size={16} weight="bold" />
+                  <SignOut size={18} weight="bold" />
                 </button>
               </Tooltip>
             </div>

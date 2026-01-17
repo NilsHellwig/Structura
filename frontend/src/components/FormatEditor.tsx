@@ -41,14 +41,15 @@ export default function FormatEditor() {
   if (outputFormat === 'default') {
     return (
       <div
-        className={`w-80 border-l flex items-center justify-center ${
+        className={`w-[320px] border-l flex items-center justify-center p-8 ${
           darkMode
-            ? 'bg-[#1a1a1a] border-gray-700'
-            : 'bg-white border-gray-200'
+            ? 'bg-zinc-950 border-zinc-900'
+            : 'bg-zinc-50 border-zinc-200 shadow-[inset_1px_0_0_0_rgba(0,0,0,0.05)]'
         }`}
       >
-        <div className="text-center px-6 py-4">
-          <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-600'}`}>
+        <div className="text-center relative">
+          <div className="absolute inset-0 bg-blue-500/5 blur-[40px] rounded-full" />
+          <p className={`relative z-10 text-[10px] font-black uppercase tracking-[0.2em] leading-relaxed opacity-40 ${darkMode ? 'text-zinc-400' : 'text-zinc-500'}`}>
             {getFormatDescription()}
           </p>
         </div>
@@ -58,25 +59,29 @@ export default function FormatEditor() {
 
   return (
     <div
-      className={`w-80 border-l flex flex-col ${
+      className={`w-[320px] border-l flex flex-col ${
         darkMode
-          ? 'bg-[#1a1a1a] border-gray-700'
-          : 'bg-white border-gray-200'
+          ? 'bg-zinc-950 border-zinc-900'
+          : 'bg-white border-zinc-200 shadow-[inset_1px_0_0_0_rgba(0,0,0,0.05)]'
       }`}
     >
-      <div className={`px-4 py-3 border-b ${
-        darkMode ? 'border-gray-800' : 'border-gray-200'
+      <div className={`px-6 py-8 border-b ${
+        darkMode ? 'border-zinc-900' : 'border-zinc-100'
       }`}>
-        <div className="flex items-center gap-2">
-          {getFormatIcon()}
+        <div className="flex items-center gap-4">
+          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg ${
+            darkMode ? 'bg-zinc-900 text-blue-400 border border-zinc-800' : 'bg-zinc-50 text-blue-600 border border-zinc-100'
+          }`}>
+            {getFormatIcon()}
+          </div>
           <div>
-            <h3 className={`font-medium text-sm ${
-              darkMode ? 'text-white' : 'text-gray-900'
+            <h3 className={`text-[11px] font-black uppercase tracking-widest mb-1 ${
+              darkMode ? 'text-white' : 'text-zinc-900'
             }`}>
               Format Editor
             </h3>
-            <p className={`text-xs ${
-              darkMode ? 'text-gray-500' : 'text-gray-600'
+            <p className={`text-[9px] font-black uppercase tracking-widest opacity-40 ${
+              darkMode ? 'text-zinc-500' : 'text-zinc-400'
             }`}>
               {getFormatDescription()}
             </p>
@@ -84,7 +89,7 @@ export default function FormatEditor() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto no-scrollbar">
         {outputFormat === 'json' && <JSONSchemaEditor />}
         {outputFormat === 'template' && <TemplateEditor />}
         {outputFormat === 'regex' && <RegexEditor />}

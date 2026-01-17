@@ -33,6 +33,10 @@ export default function SchemaNode({
     setLocalName(name);
   }, [name]);
 
+  if (!schema) {
+    return null;
+  }
+
   const type = schema.type || 'string';
 
   const handleTypeChange = (newType: JSONSchemaType) => {
@@ -57,12 +61,12 @@ export default function SchemaNode({
   };
 
   const updateProperty = (propName: string, propSchema: any) => {
-    const newProperties = { ...schema.properties, [propName]: propSchema };
+    const newProperties = { ...(schema.properties || {}), [propName]: propSchema };
     onChange({ ...schema, properties: newProperties });
   };
 
   const deleteProperty = (propName: string) => {
-    const newProperties = { ...schema.properties };
+    const newProperties = { ...(schema.properties || {}) };
     delete newProperties[propName];
     
     const newRequired = (schema.required || []).filter((r: string) => r !== propName);
@@ -72,13 +76,14 @@ export default function SchemaNode({
   const addProperty = () => {
     let baseName = "new_property";
     let counter = 1;
-    while (schema.properties && schema.properties[counter === 1 ? baseName : `${baseName}_${counter}`]) {
+    const properties = schema.properties || {};
+    while (properties[counter === 1 ? baseName : `${baseName}_${counter}`]) {
       counter++;
     }
     const finalName = counter === 1 ? baseName : `${baseName}_${counter}`;
     
     const newProperties = { 
-      ...schema.properties, 
+      ...properties, 
       [finalName]: { type: 'string' } 
     };
     onChange({ ...schema, properties: newProperties });
@@ -91,7 +96,8 @@ export default function SchemaNode({
       return;
     }
     
-    const newProperties = { ...schema.properties };
+    const properties = schema.properties || {};
+    const newProperties = { ...properties };
     
     // Prevent overwriting existing properties
     if (newProperties[newName]) {

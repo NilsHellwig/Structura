@@ -121,78 +121,76 @@ export default function PromptEditor() {
   };
 
   return (
-    <div className="px-4 pb-8 pt-2">
-      <div className={`max-w-4xl mx-auto rounded-lg shadow-xl border pointer-events-auto transition-all ${
+    <div className="px-6 pb-8 pt-4">
+      <div className={`max-w-4xl mx-auto rounded-3xl shadow-2xl border pointer-events-auto transition-all backdrop-blur-xl ${
         darkMode 
-          ? 'bg-zinc-900 border-zinc-800' 
-          : 'bg-white border-zinc-200 shadow-zinc-200/50'
+          ? 'bg-zinc-950/80 border-zinc-800 shadow-black/40' 
+          : 'bg-white/90 border-zinc-100 shadow-zinc-200/40'
       }`}>
-        <div className="p-3 flex items-end gap-3">
+        <div className="p-4 flex items-end gap-3">
           <textarea
             ref={textareaRef}
             value={prompt || ''}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="How can I help you today?"
-            className={`flex-1 resize-none outline-none bg-transparent text-[15px] font-medium leading-relaxed max-h-[240px] py-2 px-1 ${
+            placeholder="Message Structura..."
+            className={`flex-1 resize-none outline-none bg-transparent text-sm font-bold leading-relaxed max-h-[240px] py-3 px-2 ${
               darkMode ? 'text-zinc-100 placeholder-zinc-500' : 'text-zinc-900 placeholder-zinc-400'
             }`}
             rows={1}
           />
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pb-1">
             {!isLoading && outputFormat !== 'default' && (
               <button
                 onClick={handleInsertFormat}
-                title="Format-Beschreibung in Prompt einfügen"
-                className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg transition-all ${
+                title="Insert Format"
+                className={`flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-2xl transition-all ${
                   darkMode
-                    ? 'bg-zinc-800 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 border border-zinc-700'
-                    : 'bg-zinc-50 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 border border-zinc-100'
+                    ? 'text-zinc-400 hover:text-blue-400 hover:bg-zinc-800/50'
+                    : 'text-zinc-400 hover:text-blue-600 hover:bg-zinc-100'
                 }`}
               >
-                <Code size={20} weight="bold" />
+                <Code size={22} weight="bold" />
               </button>
             )}
             
             {isLoading ? (
               <button
                 onClick={handleStop}
-                className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg transition-all ${
+                className={`flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-2xl transition-all ${
                   darkMode
-                    ? 'bg-zinc-800 text-zinc-100 hover:bg-zinc-700 border border-zinc-700'
-                    : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200 border border-zinc-200'
+                    ? 'bg-zinc-800 text-red-400'
+                    : 'bg-zinc-100 text-red-600'
                 }`}
               >
-                <CircleNotch size={20} className="animate-spin absolute" />
-                <StopCircle size={22} weight="fill" className="text-red-500" />
+                <CircleNotch size={22} className="animate-spin absolute opacity-20" />
+                <StopCircle size={24} weight="fill" />
               </button>
             ) : (
               <button
                 onClick={handleSend}
                 disabled={!prompt?.trim()}
-                className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg transition-all ${
+                className={`flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-2xl transition-all active:scale-95 ${
                   !prompt?.trim()
-                    ? darkMode
-                      ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed border border-zinc-700'
-                      : 'bg-zinc-50 text-zinc-300 cursor-not-allowed border border-zinc-100'
+                    ? 'opacity-20 grayscale cursor-not-allowed'
                     : darkMode
-                      ? 'bg-zinc-100 text-zinc-900 hover:bg-white'
-                      : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                      ? 'bg-zinc-100 text-zinc-900 hover:bg-white shadow-lg shadow-white/5'
+                      : 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/10'
                 }`}
               >
-                <PaperPlaneRight size={20} weight="bold" />
+                <PaperPlaneRight size={22} weight="bold" />
               </button>
             )}
           </div>
         </div>
 
         {/* Helper info inside the editor */}
-        <div className={`px-4 pb-2 flex items-center gap-2 text-[10px] uppercase font-bold tracking-wider ${
+        <div className={`px-6 pb-4 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] opacity-40 ${
           darkMode ? 'text-zinc-500' : 'text-zinc-400'
         }`}>
           <span>{backend}</span>
           <span className="opacity-30">•</span>
-          <span>{model || 'no model'}</span>
+          <span>{model || 'NO MODEL SELECTED'}</span>
           <span className="opacity-30">•</span>
           <span>{outputFormat}</span>
         </div>
