@@ -112,7 +112,7 @@ export default function IntroModal() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="flex gap-4 p-4 rounded-lg transition-colors hover:bg-zinc-100/50 dark:hover:bg-zinc-900/50"
+                  className="flex gap-4 p-4 rounded-lg transition-colors"
                 >
                   <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${
                     darkMode ? 'bg-zinc-900 text-zinc-100 border border-zinc-800' : 'bg-zinc-100 text-zinc-900'

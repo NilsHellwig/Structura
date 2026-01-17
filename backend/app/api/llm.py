@@ -85,6 +85,7 @@ async def generate(
                 Message.created_at > user_message.created_at
             ).delete()
             db.commit()
+            db.refresh(user_message)
         else:
             # New message mode
             user_message = Message(
@@ -97,6 +98,7 @@ async def generate(
             )
             db.add(user_message)
             db.commit()
+            db.refresh(user_message)
 
         # Update title if it's the first message
         if not conversation.title or conversation.title == "New Conversation":
@@ -142,6 +144,7 @@ async def generate(
                 db.add(assistant_message)
                 conversation.updated_at = datetime.utcnow()
                 db.commit()
+                db.refresh(assistant_message)
                 yield f"data: {json.dumps({'assistant_message_id': assistant_message.id})}\n\n"
                 
             yield "data: [DONE]\n\n"

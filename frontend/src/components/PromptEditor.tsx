@@ -197,11 +197,6 @@ export default function PromptEditor() {
           <span>{outputFormat}</span>
         </div>
       </div>
-      <p className={`text-center mt-3 text-[10px] font-medium tracking-wide uppercase ${
-        darkMode ? 'text-zinc-600 font-bold' : 'text-zinc-400'
-      }`}>
-        Structura can make mistakes. Verify important information.
-      </p>
     </div>
   );
 }

@@ -110,7 +110,7 @@ export default function ChatArea() {
         <div className="max-w-4xl mx-auto px-6 py-12 space-y-12 pb-48">
           {Array.isArray(messages) && messages.map((message, index) => (
             <motion.div
-              key={message.id || index}
+              key={message.id != null ? `id-${message.id}` : `temp-${index}`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2 }}
@@ -139,7 +139,9 @@ export default function ChatArea() {
 
                   {/* Message Actions (Edit/Delete/Copy) */}
                   {!isLoading && message.id && (
-                    <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className={`absolute top-0 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity ${
+                      message.role === 'user' ? 'right-full mr-2' : 'left-full ml-2'
+                    }`}>
                       <button
                         onClick={() => handleCopy(message.content, index)}
                         className={`p-1.5 rounded-md transition-all ${

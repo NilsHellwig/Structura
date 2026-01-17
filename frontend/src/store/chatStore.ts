@@ -156,14 +156,21 @@ export const useChatStore = create<ChatState>((set, get) => {
     },
     deleteMessage: async (messageId: number) => {
       const { currentConversationId } = get();
-      if (!currentConversationId) return;
+      if (!currentConversationId || !messageId) return;
 
       try {
         await api.delete(`/conversations/${currentConversationId}/messages/${messageId}`);
         set((state) => ({
           messages: state.messages.filter((m) => m.id !== messageId),
         }));
-      } catch (error) {
+      } catch (error: any) {
+        // If 404, the message is already gone from backend, just update UI
+        if (error.response?.status === 404) {
+          set((state) => ({
+            messages: state.messages.filter((m) => m.id !== messageId),
+          }));
+          return;
+        }
         console.error('Error deleting message:', error);
         throw error;
       }
@@ -287,25 +294,46 @@ export const useChatStore = create<ChatState>((set, get) => {
                 if (parsed.assistant_message_id) assistantMsgId = parsed.assistant_message_id;
                 if (parsed.content) assistantContent += parsed.content;
 
-                set((s) => ({
-                  messages: [
-                    ...newMessages.map((m, i) => 
-                      i === newMessages.length - 1 && userMsgId ? { ...m, id: userMsgId } : m
-                    ),
-                    { ...assistantMessage, content: assistantContent, id: assistantMsgId },
-                  ]
-                }));
+                set((s) => {
+                  const updatedMessages = [...newMessages];
+                  
+                  // Update user message ID if found
+                  if (userMsgId && updatedMessages.length > 0) {
+                    const lastIdx = updatedMessages.length - 1;
+                    updatedMessages[lastIdx] = { 
+                      ...updatedMessages[lastIdx], 
+                      id: userMsgId 
+                    };
+                  }
+
+                  // Create/Update assistant message
+                  const updatedAssistant = { 
+                    ...assistantMessage, 
+                    content: assistantContent 
+                  };
+                  if (assistantMsgId) {
+                    updatedAssistant.id = assistantMsgId;
+                  }
+
+                  return {
+                    messages: [...updatedMessages, updatedAssistant]
+                  };
+                });
               } catch (e) {
                 console.error('Failed to parse SSE data:', e);
               }
             }
           }
         }
-      } catch (error) {
-        console.error('Error sending message:', error);
-        throw error;
+      } catch (error: any) {
+        if (error.name === 'AbortError' || error.message === 'The operation was aborted.') {
+          console.log('Fetch aborted');
+        } else {
+          console.error('Error sending message:', error);
+          throw error;
+        }
       } finally {
-        set({ isLoading: false });
+        set({ isLoading: false, abortController: null });
       }
     },
   };
