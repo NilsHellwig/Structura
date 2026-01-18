@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Robot, Copy, Check, PencilSimple, Trash, CheckCircle, XCircle, Sparkle, PaperPlaneRight } from 'phosphor-react';
+import { Robot, Copy, Check, PencilSimple, Trash, CheckCircle, XCircle, Sparkle, PaperPlaneRight, FileCsv, Table } from 'phosphor-react';
 import { useUIStore } from '../store/uiStore';
 import { useChatStore } from '../store/chatStore';
 import { useAuthStore } from '../store/authStore';
@@ -27,6 +27,29 @@ export default function ChatArea() {
     setCopiedIndex(index);
     toast.success('Copied to clipboard');
     setTimeout(() => setCopiedIndex(null), 2000);
+  };
+
+  const handleCopyCSV = (content: string, separator: ',' | ';') => {
+    let text = content;
+    if (separator === ';') {
+      // Basic replacement for display purposes, but better to parse and re-join
+      const lines = content.trim().split('\n');
+      text = lines.map(line => line.split(',').join(';')).join('\n');
+    }
+    navigator.clipboard.writeText(text);
+    toast.success(`Copied with ${separator === ',' ? 'comma' : 'semicolon'} separator`);
+  };
+
+  const parseCSV = (csv: string) => {
+    try {
+      const lines = csv.trim().split('\n');
+      if (lines.length === 0) return null;
+      const headers = lines[0].split(',').map(h => h.trim());
+      const rows = lines.slice(1).map(line => line.split(',').map(c => c.trim()));
+      return { headers, rows };
+    } catch (e) {
+      return null;
+    }
   };
 
   const handleStartEdit = (messageId: number, content: string) => {
@@ -174,7 +197,7 @@ export default function ChatArea() {
                   <div className={`text-[9px] font-black uppercase tracking-[0.2em] mb-3 opacity-40 ${
                     darkMode ? 'text-zinc-400' : 'text-zinc-500'
                   }`}>
-                    {message.role === 'user' ? 'Authorized User' : 'System'}
+                    {message.role === 'user' ? 'User' : 'System'}
                   </div>
 
                   {/* Bubble */}
@@ -225,7 +248,63 @@ export default function ChatArea() {
                       <>
                         <div className="text-sm leading-relaxed overflow-x-auto no-scrollbar font-normal">
                           {message.content ? (
-                            (message.output_format === 'template' || message.output_format === 'regex') ? (
+                            message.output_format === 'html' ? (
+                              <MarkdownRenderer content={`\`\`\`html\n${message.content}\n\`\`\``} />
+                            ) : message.output_format === 'csv' ? (
+                              <div className="space-y-4">
+                                {(() => {
+                                  const csvData = parseCSV(message.content);
+                                  if (!csvData) return <div className="whitespace-pre-wrap">{message.content}</div>;
+                                  return (
+                                    <div className={`overflow-hidden rounded-2xl border ${darkMode ? 'border-zinc-800' : 'border-zinc-100'}`}>
+                                      <table className="w-full text-left border-collapse">
+                                        <thead>
+                                          <tr className={`${darkMode ? 'bg-white/5' : 'bg-zinc-50'}`}>
+                                            {csvData.headers.map((h, i) => (
+                                              <th key={i} className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest border-b ${darkMode ? 'border-zinc-800 text-zinc-400' : 'border-zinc-100 text-zinc-500'}`}>
+                                                {h}
+                                              </th>
+                                            ))}
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {csvData.rows.map((row, i) => (
+                                            <tr key={i} className="group hover:bg-zinc-500/5 transition-colors">
+                                              {row.map((cell, j) => (
+                                                <td key={j} className={`px-4 py-3 text-[11px] border-b last:border-b-0 ${darkMode ? 'border-zinc-800 text-zinc-300' : 'border-zinc-100 text-zinc-600'}`}>
+                                                  {cell}
+                                                </td>
+                                              ))}
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  );
+                                })()}
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleCopyCSV(message.content, ',')}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
+                                      darkMode ? 'bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white' : 'bg-white border border-zinc-100 text-zinc-500 hover:text-black shadow-sm'
+                                    }`}
+                                  >
+                                    <FileCsv size={14} weight="bold" />
+                                    Copy with ,
+                                  </button>
+                                  <button
+                                    onClick={() => handleCopyCSV(message.content, ';')}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
+                                      darkMode ? 'bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white' : 'bg-white border border-zinc-100 text-zinc-500 hover:text-black shadow-sm'
+                                    }`}
+                                  >
+                                    <FileCsv size={14} weight="bold" />
+                                    Copy with ;
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (message.output_format === 'template' || 
+                             message.output_format === 'regex') ? (
                               <div className="whitespace-pre-wrap break-words">
                                 {message.content}
                               </div>

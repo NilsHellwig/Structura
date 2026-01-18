@@ -73,6 +73,23 @@ async def list_models(
         )
 
 
+@router.get("/capabilities")
+async def get_capabilities():
+    """Get the supported output formats for each backend"""
+    return {
+        LLMBackend.openai: [OutputFormat.default, OutputFormat.json],
+        LLMBackend.vllm: [
+            OutputFormat.default, 
+            OutputFormat.json, 
+            OutputFormat.template, 
+            OutputFormat.regex, 
+            OutputFormat.html, 
+            OutputFormat.csv
+        ],
+        LLMBackend.ollama: [OutputFormat.default, OutputFormat.json]
+    }
+
+
 @router.post("/generate")
 async def generate(
     request: GenerateRequest,

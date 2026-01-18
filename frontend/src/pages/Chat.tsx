@@ -33,7 +33,8 @@ export default function Chat() {
     const initChat = async () => {
       await Promise.all([
         useChatStore.getState().loadConversations(),
-        useChatStore.getState().loadBackendSettings()
+        useChatStore.getState().loadBackendSettings(),
+        useChatStore.getState().fetchCapabilities()
       ]);
       setLoading(false);
     };

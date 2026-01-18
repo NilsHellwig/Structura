@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.models import JSONSchema, Template, RegexPattern
+from app.models import JSONSchema, Template, RegexPattern, CSVPreset
 from app.schemas.formats import (
     JSONSchemaResponse, JSONSchemaCreate, JSONSchemaUpdate,
     TemplateResponse, TemplateCreate, TemplateUpdate,
-    RegexPatternResponse, RegexPatternCreate, RegexPatternUpdate
+    RegexPatternResponse, RegexPatternCreate, RegexPatternUpdate,
+    CSVPresetResponse, CSVPresetCreate, CSVPresetUpdate
 )
 from app.dependencies import get_current_user
 from app.models import User
@@ -259,5 +260,88 @@ def delete_regex_pattern(
         )
     
     db.delete(pattern)
+    db.commit()
+    return None
+
+
+# CSV Preset endpoints
+@router.get("/csv", response_model=List[CSVPresetResponse])
+def get_csv_presets(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get all CSV presets for the current user"""
+    presets = db.query(CSVPreset).filter(
+        CSVPreset.user_id == current_user.id
+    ).order_by(CSVPreset.updated_at.desc()).all()
+    return presets
+
+
+@router.post("/csv", response_model=CSVPresetResponse, status_code=status.HTTP_201_CREATED)
+def create_csv_preset(
+    preset: CSVPresetCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Create a new CSV preset"""
+    new_preset = CSVPreset(
+        user_id=current_user.id,
+        name=preset.name,
+        columns=preset.columns
+    )
+    db.add(new_preset)
+    db.commit()
+    db.refresh(new_preset)
+    return new_preset
+
+
+@router.patch("/csv/{preset_id}", response_model=CSVPresetResponse)
+def update_csv_preset(
+    preset_id: int,
+    preset_update: CSVPresetUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Update a CSV preset"""
+    preset = db.query(CSVPreset).filter(
+        CSVPreset.id == preset_id,
+        CSVPreset.user_id == current_user.id
+    ).first()
+    
+    if not preset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Preset not found"
+        )
+    
+    if preset_update.name is not None:
+        preset.name = preset_update.name
+    if preset_update.columns is not None:
+        preset.columns = preset_update.columns
+    
+    db.commit()
+    db.refresh(preset)
+    return preset
+
+
+@router.delete("/csv/{preset_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_csv_preset(
+    preset_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Delete a CSV preset"""
+    preset = db.query(CSVPreset).filter(
+        CSVPreset.id == preset_id,
+        CSVPreset.user_id == current_user.id
+    ).first()
+    
+    if not preset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Preset not found"
+        )
+    
+    db.delete(preset)
     db.commit()
     return None

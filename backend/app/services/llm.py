@@ -100,6 +100,19 @@ async def generate_llm_response(
                     "regex": guided_regex
                 }
             }
+        elif output_format == OutputFormat.html:
+            request_params["extra_body"] = {
+                "structured_outputs": {
+                    "regex": r"\s*<[!?a-zA-Z].*"
+                }
+            }
+        elif output_format == OutputFormat.csv:
+            guided_regex = _csv_to_regex(format_spec or "")
+            request_params["extra_body"] = {
+                "structured_outputs": {
+                    "regex": guided_regex
+                }
+            }
 
     # Make API call
     response = await client.chat.completions.create(**request_params)
@@ -183,6 +196,19 @@ async def generate_llm_response_stream(
                     "regex": guided_regex
                 }
             }
+        elif output_format == OutputFormat.html:
+            request_params["extra_body"] = {
+                "structured_outputs": {
+                    "regex": r"\s*<[!?a-zA-Z].*"
+                }
+            }
+        elif output_format == OutputFormat.csv:
+            guided_regex = _csv_to_regex(format_spec or "")
+            request_params["extra_body"] = {
+                "structured_outputs": {
+                    "regex": guided_regex
+                }
+            }
 
     # Make streaming API call
     stream = await client.chat.completions.create(**request_params)
@@ -197,6 +223,31 @@ def _validate_regex_response(content: str, pattern: str) -> bool:
         return bool(re.fullmatch(pattern, content, re.DOTALL))
     except re.error:
         return False
+
+
+def _csv_to_regex(format_spec: str) -> str:
+    """Convert a CSV spec to a regex pattern. Spec can be a comma-separated list of column names or empty for free table."""
+    if not format_spec or format_spec.strip() == "":
+        # Generic CSV: multiple lines of comma-separated content
+        return r"([^,\n]+,)*[^,\n]+(\n([^,\n]+,)*[^,\n]+)*"
+    
+    try:
+        columns = [c.strip() for c in format_spec.split(",")]
+        # Header line (literal)
+        header_regex = r"\s*".join([re.escape(c) for c in columns])
+        # Replace the joins with proper comma escaping
+        header_regex = ",".join([re.escape(c) for c in columns])
+        
+        # Cell regex: anything but comma or newline
+        cell = r"[^,\n]+"
+        # Row regex: n cells separated by n-1 commas
+        row_cells = ",".join([cell] * len(columns))
+        
+        # Complete regex: Header \n (Row \n)*
+        return f"{header_regex}\n({row_cells}\n?)*"
+    except Exception:
+        # Fallback to generic
+        return r"([^,\n]+,)*[^,\n]+(\n([^,\n]+,)*[^,\n]+)*"
 
 
 def _template_to_regex(template: str) -> str:
@@ -244,6 +295,12 @@ def _get_format_instruction(output_format: OutputFormat, format_spec: str) -> st
         )
     elif output_format == OutputFormat.json:
         return "You must respond with valid JSON only. Do not add any explanations or extra text outside the JSON."
+    elif output_format == OutputFormat.html:
+        return "You must respond with valid XML/HTML only. Do not add any explanations or extra text outside the tags."
+    elif output_format == OutputFormat.csv:
+        if format_spec:
+            return f"You must respond in CSV format with these exact columns: {format_spec}. Do not add any explanations or extra text."
+        return "You must respond in valid CSV format. Do not add any explanations or extra text."
     return ""
 
 

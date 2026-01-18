@@ -14,6 +14,8 @@ class OutputFormat(str, Enum):
     json = "json"
     template = "template"
     regex = "regex"
+    html = "html"
+    csv = "csv"
 
 
 class LLMBackend(str, Enum):

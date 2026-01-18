@@ -1,9 +1,11 @@
-import { BracketsCurly, TextAa, Textbox } from 'phosphor-react';
+import { BracketsCurly, TextAa, Textbox, Code, Table } from 'phosphor-react';
 import { useChatStore } from '../store/chatStore';
 import { useUIStore } from '../store/uiStore';
 import JSONSchemaEditor from './editors/JSONSchemaEditor';
 import TemplateEditor from './editors/TemplateEditor';
 import RegexEditor from './editors/RegexEditor';
+import HTMLEditor from './editors/HTMLEditor';
+import CSVEditor from './editors/CSVEditor';
 
 export default function FormatEditor() {
   const darkMode = useUIStore((state) => state.darkMode);
@@ -18,6 +20,10 @@ export default function FormatEditor() {
         return <Textbox size={16} className={iconClass} />;
       case 'regex':
         return <TextAa size={16} className={iconClass} />;
+      case 'html':
+        return <Code size={16} className={iconClass} />;
+      case 'csv':
+        return <Table size={16} className={iconClass} />;
       default:
         return null;
     }
@@ -31,6 +37,10 @@ export default function FormatEditor() {
         return 'Configure template';
       case 'regex':
         return 'Set regex pattern';
+      case 'html':
+        return 'HTML document';
+      case 'csv':
+        return 'CSV spreadsheet';
       case 'default':
         return 'Default mode - no configuration required';
       default:
@@ -93,6 +103,8 @@ export default function FormatEditor() {
         {outputFormat === 'json' && <JSONSchemaEditor />}
         {outputFormat === 'template' && <TemplateEditor />}
         {outputFormat === 'regex' && <RegexEditor />}
+        {outputFormat === 'html' && <HTMLEditor />}
+        {outputFormat === 'csv' && <CSVEditor />}
       </div>
     </div>
   );

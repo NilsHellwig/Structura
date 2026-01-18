@@ -8,6 +8,8 @@ export enum OutputFormat {
   JSON = 'json',
   TEMPLATE = 'template',
   REGEX = 'regex',
+  HTML = 'html',
+  CSV = 'csv',
 }
 
 export enum LLMBackend {
@@ -66,6 +68,15 @@ export interface RegexPattern {
   user_id: number;
   name: string;
   pattern: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CSVPreset {
+  id: number;
+  user_id: number;
+  name: string;
+  columns: string;
   created_at: string;
   updated_at: string;
 }

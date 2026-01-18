@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
-import { X, Sliders } from 'phosphor-react';
+import { X, Sliders, BracketsCurly, Selection, Code, FileHtml, Table } from 'phosphor-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUIStore } from '../store/uiStore';
 import { useChatStore } from '../store/chatStore';
 import JSONSchemaEditor from './editors/JSONSchemaEditor';
 import TemplateEditor from './editors/TemplateEditor';
 import RegexEditor from './editors/RegexEditor';
+import HTMLEditor from './editors/HTMLEditor';
+import CSVEditor from './editors/CSVEditor';
 
 export default function FormatEditorModal() {
   const darkMode = useUIStore((state) => state.darkMode);
@@ -16,6 +18,28 @@ export default function FormatEditorModal() {
   if (outputFormat === 'default') {
     return null; // No button for default mode
   }
+
+  const getFormatIcon = () => {
+    switch (outputFormat) {
+      case 'json': return <BracketsCurly size={24} weight="fill" className="text-blue-500" />;
+      case 'template': return <Selection size={24} weight="fill" className="text-blue-500" />;
+      case 'regex': return <Code size={24} weight="fill" className="text-blue-500" />;
+      case 'html': return <FileHtml size={24} weight="fill" className="text-green-500" />;
+      case 'csv': return <Table size={24} weight="fill" className="text-amber-500" />;
+      default: return <Sliders size={24} weight="fill" className="text-blue-500" />;
+    }
+  };
+
+  const getFormatTitle = () => {
+    switch (outputFormat) {
+      case 'json': return 'JSON Artifact';
+      case 'template': return 'Template Artifact';
+      case 'regex': return 'Regex Artifact';
+      case 'html': return 'HTML Artifact';
+      case 'csv': return 'CSV Artifact';
+      default: return 'Format Artifact';
+    }
+  };
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -60,16 +84,17 @@ export default function FormatEditorModal() {
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
                       darkMode ? 'bg-zinc-900 border border-white/5' : 'bg-zinc-100 border border-zinc-200/50 shadow-sm'
                     }`}>
-                      <Sliders size={24} weight="fill" className="text-blue-500" />
+                      {getFormatIcon()}
                     </div>
                     <div>
                       <Dialog.Title className={`text-lg font-black uppercase tracking-[-0.02em] ${
                         darkMode ? 'text-white' : 'text-black'
                       }`}>
-                        {outputFormat === 'json' && 'JSON Artifact'}
-                        {outputFormat === 'template' && 'Template Artifact'}
-                        {outputFormat === 'regex' && 'Regex Artifact'}
+                        {getFormatTitle()}
                       </Dialog.Title>
+                      <Dialog.Description className="sr-only">
+                        Configure the settings and structure for the selected output format.
+                      </Dialog.Description>
                       <p className={`text-[10px] font-black uppercase tracking-[0.2em] opacity-40 ${
                         darkMode ? 'text-zinc-400' : 'text-zinc-500'
                       }`}>Format Library Editor</p>
@@ -90,6 +115,8 @@ export default function FormatEditorModal() {
                   {outputFormat === 'json' && <JSONSchemaEditor />}
                   {outputFormat === 'template' && <TemplateEditor />}
                   {outputFormat === 'regex' && <RegexEditor />}
+                  {outputFormat === 'html' && <HTMLEditor />}
+                  {outputFormat === 'csv' && <CSVEditor />}
                 </div>
               </motion.div>
             </Dialog.Content>

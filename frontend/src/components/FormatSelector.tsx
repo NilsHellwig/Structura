@@ -3,24 +3,27 @@ import * as Popover from '@radix-ui/react-popover';
 import { CaretDown, Check } from 'phosphor-react';
 import { useUIStore } from '../store/uiStore';
 import { useChatStore } from '../store/chatStore';
-import type { OutputFormat } from '../types';
+import { OutputFormat } from '../types';
 
 const formats: { value: OutputFormat; label: string }[] = [
-  { value: 'default', label: 'Default' },
-  { value: 'json', label: 'JSON Schema' },
-  { value: 'template', label: 'Template' },
-  { value: 'regex', label: 'Regex' },
+  { value: OutputFormat.DEFAULT, label: 'Default' },
+  { value: OutputFormat.JSON, label: 'JSON Schema' },
+  { value: OutputFormat.TEMPLATE, label: 'Template' },
+  { value: OutputFormat.REGEX, label: 'Regex' },
+  { value: OutputFormat.HTML, label: 'HTML' },
+  { value: OutputFormat.CSV, label: 'CSV' },
 ];
 
 export default function FormatSelector() {
   const darkMode = useUIStore((state) => state.darkMode);
-  const { backend, outputFormat, setOutputFormat } = useChatStore();
+  const { backend, outputFormat, setOutputFormat, capabilities } = useChatStore();
   const [open, setOpen] = useState(false);
 
   const availableFormats = formats.filter(f => {
-    if (f.value === 'regex' && backend !== 'vllm') return false;
-    if (f.value === 'template' && backend !== 'vllm') return false;
-    return true;
+    const backendCapabilities = capabilities[backend] || [];
+    // If capabilities are not yet loaded, show only default
+    if (Object.keys(capabilities).length === 0) return f.value === OutputFormat.DEFAULT;
+    return backendCapabilities.includes(f.value);
   });
 
   const selectedFormat = availableFormats.find((f) => f.value === outputFormat) || availableFormats[0];

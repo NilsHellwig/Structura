@@ -17,3 +17,4 @@ class User(Base):
     json_schemas = relationship("JSONSchema", back_populates="user", cascade="all, delete-orphan")
     templates = relationship("Template", back_populates="user", cascade="all, delete-orphan")
     regex_patterns = relationship("RegexPattern", back_populates="user", cascade="all, delete-orphan")
+    csv_presets = relationship("CSVPreset", back_populates="user", cascade="all, delete-orphan")

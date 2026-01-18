@@ -16,6 +16,7 @@ interface ChatState {
   isLoading: boolean;
   isStreaming: boolean;
   abortController: AbortController | null;
+  capabilities: Record<string, string[]>;
   
   setConversations: (conversations: Conversation[]) => void;
   setCurrentConversation: (id: number | null) => void;
@@ -38,6 +39,7 @@ interface ChatState {
   deleteMessage: (messageId: number) => Promise<void>;
   editMessage: (messageId: number, content: string) => Promise<void>;
   sendMessage: (customPrompt?: string, editMessageId?: number) => Promise<void>;
+  fetchCapabilities: () => Promise<void>;
 }
 
 const STORAGE_KEY_MODELS = 'structura_backend_models';
@@ -92,6 +94,8 @@ export const useChatStore = create<ChatState>((set, get) => {
       'json': JSON.stringify({ type: 'object', properties: {} }, null, 2),
       'template': 'Name: [GEN]\nAge: [GEN]',
       'regex': '[A-Za-z0-9]+',
+      'html': '<!DOCTYPE html>\n<html>\n<body>\n[GEN]\n</body>\n</html>',
+      'csv': 'Column 1,Column 2',
     },
     llmParameters: {},
     prompt: '',
@@ -99,16 +103,24 @@ export const useChatStore = create<ChatState>((set, get) => {
     isLoading: false,
     isStreaming: false,
     abortController: null,
+    capabilities: {},
 
     setConversations: (conversations) => set({ conversations }),
     setCurrentConversation: (id) => set({ currentConversationId: id }),
     setBackend: (backend) => {
+      const state = get();
       const models = getStoredModels();
       const newModel = models[backend] || '';
       saveStoredBackend(backend);
       
+      // Auto-switch output format if not supported by the new backend
+      let newFormat = state.outputFormat;
+      const backendCapabilities = state.capabilities[backend] || [];
+      if (backendCapabilities.length > 0 && !backendCapabilities.includes(state.outputFormat)) {
+        newFormat = 'default' as OutputFormat;
+      }
+
       // Set initial/fallback parameters for the new backend immediately
-      // to avoid triggering model fetches with parameters from the PREVIOUS backend
       const defaultBaseUrl = backend === 'vllm' ? 'http://localhost:8000' : 'http://localhost:11434';
       const initialParams = {
         ...get().llmParameters,
@@ -116,7 +128,13 @@ export const useChatStore = create<ChatState>((set, get) => {
         api_key: undefined
       };
 
-      set({ backend, model: newModel, llmParameters: initialParams });
+      set({ 
+        backend, 
+        model: newModel, 
+        llmParameters: initialParams,
+        outputFormat: newFormat,
+        formatSpec: state.formatSpecs[newFormat] || null
+      });
       
       // Load user-saved backend specific settings (overrides defaults)
       api.get('/settings/backends').then(response => {
@@ -428,6 +446,15 @@ export const useChatStore = create<ChatState>((set, get) => {
         }
       } finally {
         set({ isLoading: false, abortController: null });
+      }
+    },
+
+    fetchCapabilities: async () => {
+      try {
+        const response = await api.get('/llm/capabilities');
+        set({ capabilities: response.data });
+      } catch (error) {
+        console.error('Error fetching capabilities:', error);
       }
     },
   };

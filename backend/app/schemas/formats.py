@@ -73,3 +73,27 @@ class RegexPatternResponse(RegexPatternBase):
 
     class Config:
         from_attributes = True
+
+
+class CSVPresetBase(BaseModel):
+    name: str
+    columns: str
+
+
+class CSVPresetCreate(CSVPresetBase):
+    pass
+
+
+class CSVPresetUpdate(BaseModel):
+    name: Optional[str] = None
+    columns: Optional[str] = None
+
+
+class CSVPresetResponse(CSVPresetBase):
+    id: int
+    user_id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
