@@ -133,7 +133,7 @@ export default function RegexEditor() {
               onChange={(e) => setRegex(e.target.value)}
               className={`w-full px-6 py-5 font-mono text-sm rounded-3xl border transition-all outline-none ${
                 darkMode
-                  ? `bg-zinc-950 border-zinc-900 focus:border-zinc-700 focus:bg-zinc-900/50 text-zinc-300`
+                  ? `bg-[#0d1117] border-zinc-900 focus:border-zinc-700 focus:bg-[#0d1117] text-zinc-300`
                   : `bg-zinc-50 border-zinc-100 focus:border-zinc-300 focus:bg-white text-zinc-900`
               } ${!isValid ? 'border-red-500/50 focus:border-red-500' : ''}`}
               placeholder="[A-Za-z0-9]+"

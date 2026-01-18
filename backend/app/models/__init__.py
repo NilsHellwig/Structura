@@ -6,6 +6,7 @@ from app.models.message import Message, MessageRole, OutputFormat, LLMBackend
 from app.models.json_schema import JSONSchema
 from app.models.template import Template
 from app.models.regex_pattern import RegexPattern
+from app.models.backend_setting import BackendSetting
 
 __all__ = [
     "User",
@@ -17,5 +18,6 @@ __all__ = [
     "JSONSchema",
     "Template",
     "RegexPattern",
+    "BackendSetting",
 ]
 

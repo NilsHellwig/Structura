@@ -9,6 +9,7 @@ interface ChatState {
   model: string;
   outputFormat: OutputFormat;
   formatSpec: string | null;
+  formatSpecs: Record<string, string | null>;
   llmParameters: Record<string, any>;
   prompt: string;
   messages: Message[];
@@ -31,6 +32,8 @@ interface ChatState {
   
   // Actions
   loadConversations: () => Promise<void>;
+  loadBackendSettings: () => Promise<void>;
+  updateBackendSetting: (backend: string, baseUrl: string, apiKey?: string) => Promise<void>;
   createNewConversation: () => Promise<number | null>;
   deleteMessage: (messageId: number) => Promise<void>;
   editMessage: (messageId: number, content: string) => Promise<void>;
@@ -38,6 +41,7 @@ interface ChatState {
 }
 
 const STORAGE_KEY_MODELS = 'structura_backend_models';
+const STORAGE_KEY_BACKEND = 'structura_selected_backend';
 
 const getStoredModels = (): Record<string, string> => {
   try {
@@ -58,8 +62,21 @@ const saveStoredModel = (backend: string, model: string) => {
   localStorage.setItem(STORAGE_KEY_MODELS, JSON.stringify(models));
 };
 
+const getStoredBackend = (): LLMBackend => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY_BACKEND);
+    return (stored as LLMBackend) || 'ollama';
+  } catch {
+    return 'ollama';
+  }
+};
+
+const saveStoredBackend = (backend: LLMBackend) => {
+  localStorage.setItem(STORAGE_KEY_BACKEND, backend);
+};
+
 export const useChatStore = create<ChatState>((set, get) => {
-  const initialBackend = 'ollama' as LLMBackend;
+  const initialBackend = getStoredBackend();
   const storedModels = getStoredModels();
   const initialModel = storedModels[initialBackend] || '';
 
@@ -70,6 +87,12 @@ export const useChatStore = create<ChatState>((set, get) => {
     model: initialModel,
     outputFormat: 'default' as OutputFormat,
     formatSpec: null,
+    formatSpecs: {
+      'default': null,
+      'json': JSON.stringify({ type: 'object', properties: {} }, null, 2),
+      'template': 'Name: [GEN]\nAge: [GEN]',
+      'regex': '[A-Za-z0-9]+',
+    },
     llmParameters: {},
     prompt: '',
     messages: [],
@@ -79,41 +102,49 @@ export const useChatStore = create<ChatState>((set, get) => {
 
     setConversations: (conversations) => set({ conversations }),
     setCurrentConversation: (id) => set({ currentConversationId: id }),
-    setBackend: (backend) => set((state) => {
+    setBackend: (backend) => {
       const models = getStoredModels();
       const newModel = models[backend] || '';
-      return { backend, model: newModel };
-    }),
+      saveStoredBackend(backend);
+      
+      // Set initial/fallback parameters for the new backend immediately
+      // to avoid triggering model fetches with parameters from the PREVIOUS backend
+      const defaultBaseUrl = backend === 'vllm' ? 'http://localhost:8000' : 'http://localhost:11434';
+      const initialParams = {
+        ...get().llmParameters,
+        base_url: backend === 'openai' ? undefined : defaultBaseUrl,
+        api_key: undefined
+      };
+
+      set({ backend, model: newModel, llmParameters: initialParams });
+      
+      // Load user-saved backend specific settings (overrides defaults)
+      api.get('/settings/backends').then(response => {
+        const settings = response.data;
+        const currentSetting = settings.find((s: any) => s.backend === backend);
+        if (currentSetting) {
+          set({
+            llmParameters: {
+              ...get().llmParameters,
+              base_url: currentSetting.base_url,
+              api_key: currentSetting.api_key
+            }
+          });
+        }
+      });
+    },
     setModel: (model) => set((state) => {
       saveStoredModel(state.backend, model);
       return { model };
     }),
     setOutputFormat: (format) => set((state) => {
-      // Logic to ensure formatSpec is valid for the new format
-      let newSpec = state.formatSpec;
-      
-      if (format === 'json') {
-        try {
-          if (!newSpec || !newSpec.trim().startsWith('{')) throw new Error();
-          JSON.parse(newSpec);
-        } catch {
-          newSpec = JSON.stringify({ type: 'object', properties: {} }, null, 2);
-        }
-      } else if (format === 'regex') {
-        if (!newSpec || newSpec.trim().startsWith('{')) {
-          newSpec = '[A-Za-z0-9]+';
-        }
-      } else if (format === 'template') {
-        if (!newSpec || newSpec.trim().startsWith('{')) {
-          newSpec = 'Answer: {{answer}}';
-        }
-      } else {
-        newSpec = null;
-      }
-
+      const newSpec = state.formatSpecs[format] || null;
       return { outputFormat: format, formatSpec: newSpec };
     }),
-    setFormatSpec: (spec) => set({ formatSpec: spec }),
+    setFormatSpec: (spec) => set((state) => ({ 
+      formatSpec: spec,
+      formatSpecs: { ...state.formatSpecs, [state.outputFormat]: spec }
+    })),
     setLLMParameters: (params) => set({ llmParameters: params }),
     setPrompt: (prompt) => set({ prompt }),
     setMessages: (messages) => set({ messages }),
@@ -136,6 +167,52 @@ export const useChatStore = create<ChatState>((set, get) => {
         }
       } catch (error) {
         console.error('Error loading conversations:', error);
+      }
+    },
+
+    loadBackendSettings: async () => {
+      try {
+        const response = await api.get('/settings/backends');
+        const settings = response.data;
+        
+        // Find current backend's setting
+        const currentBackend = get().backend;
+        const currentSetting = settings.find((s: any) => s.backend === currentBackend);
+        
+        if (currentSetting) {
+          set({
+            llmParameters: {
+              ...get().llmParameters,
+              base_url: currentSetting.base_url,
+              api_key: currentSetting.api_key
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error loading backend settings:', error);
+      }
+    },
+
+    updateBackendSetting: async (backend, baseUrl, apiKey) => {
+      try {
+        await api.post('/settings/backends', {
+          backend,
+          base_url: baseUrl,
+          api_key: apiKey
+        });
+        
+        // Update local state
+        if (get().backend === backend) {
+          set({
+            llmParameters: {
+              ...get().llmParameters,
+              base_url: baseUrl,
+              api_key: apiKey
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error updating backend setting:', error);
       }
     },
 
@@ -194,7 +271,7 @@ export const useChatStore = create<ChatState>((set, get) => {
     sendMessage: async (customPrompt?: string, editMessageId?: number) => {
       const state = get();
       let convId = state.currentConversationId;
-      const promptToSend = customPrompt || state.prompt;
+      let promptToSend = customPrompt || state.prompt;
 
       if (!convId) {
         convId = await state.createNewConversation();
@@ -202,6 +279,23 @@ export const useChatStore = create<ChatState>((set, get) => {
       }
 
       if (!promptToSend?.trim() || state.isLoading) return;
+
+      // Automatically append format instruction if not default
+      if (state.outputFormat !== 'default' && state.formatSpec) {
+        let textToInsert = '';
+        if (state.outputFormat === 'json') {
+          textToInsert = `\n\n%-%-%\nPlease answer exactly in this JSON format:\n\`\`\`json\n${state.formatSpec}\n\`\`\``;
+        } else if (state.outputFormat === 'template') {
+          textToInsert = `\n\n%-%-%\nUse the following template for your answer:\n\`\`\`\n${state.formatSpec}\n\`\`\``;
+        } else if (state.outputFormat === 'regex') {
+          textToInsert = `\n\n%-%-%\nYour answer must exactly match the following regex:\n\`\`\`\n${state.formatSpec}\n\`\`\``;
+        }
+        
+        // Append only if it doesn't already contain this exact instruction
+        if (textToInsert && !promptToSend.includes(textToInsert)) {
+          promptToSend += textToInsert;
+        }
+      }
 
       let newMessages: Message[];
       if (editMessageId) {

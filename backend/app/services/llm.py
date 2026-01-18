@@ -17,11 +17,17 @@ def _get_openai_client(backend: LLMBackend, parameters: Dict[str, Any]) -> Async
     
     elif backend == LLMBackend.vllm:
         base_url = parameters.get("base_url") or "http://localhost:8000/v1"
-        return AsyncOpenAI(base_url=base_url, api_key="vllm-key") # vLLM often doesn't need a real key
+        # Ensure base_url ends with /v1 if it doesn't already
+        if not base_url.endswith("/v1") and not base_url.endswith("/v1/"):
+            base_url = base_url.rstrip("/") + "/v1"
+        return AsyncOpenAI(base_url=base_url, api_key="vllm-key")
     
     elif backend == LLMBackend.ollama:
         base_url = parameters.get("base_url") or "http://localhost:11434/v1"
-        return AsyncOpenAI(base_url=base_url, api_key="ollama") # Ollama's OpenAI compatible API
+        # Ensure base_url ends with /v1 for OpenAI compatibility
+        if not base_url.endswith("/v1") and not base_url.endswith("/v1/"):
+            base_url = base_url.rstrip("/") + "/v1"
+        return AsyncOpenAI(base_url=base_url, api_key="ollama")
     
     else:
         raise ValueError(f"Unsupported backend for OpenAI client: {backend}")
@@ -44,8 +50,21 @@ async def generate_llm_response(
         "model": model,
         "messages": messages,
         "temperature": float(parameters.get("temperature", 0.7)),
-        "max_tokens": int(parameters.get("max_tokens", 2048)),
+        "max_tokens": int(parameters.get("max_tokens", 1024)),
     }
+    
+    # Add format instructions to messages for better compliance
+    if output_format != OutputFormat.default and format_spec:
+        format_instruction = _get_format_instruction(output_format, format_spec)
+        messages_copy = list(messages)
+        if messages_copy and messages_copy[0].get("role") == "system":
+            messages_copy[0] = {
+                "role": "system",
+                "content": format_instruction + "\n\n" + messages_copy[0]["content"]
+            }
+        else:
+            messages_copy.insert(0, {"role": "system", "content": format_instruction})
+        request_params["messages"] = messages_copy
     
     # Handle structured output formats
     if output_format == OutputFormat.json and format_spec:
@@ -64,12 +83,23 @@ async def generate_llm_response(
         except json.JSONDecodeError:
             # Fallback to older response_format if it's not a valid schema
             request_params["response_format"] = {"type": "json_object"}
-            
-    # For vLLM specifically, we can use their extended parameters if needed
-    # (though using the standard OpenAI format is preferred for compatibility)
-    if backend == LLMBackend.vllm and output_format == OutputFormat.regex and format_spec:
-        # vLLM supports guided_regex via extra_body
-        request_params["extra_body"] = {"guided_regex": format_spec}
+    
+    # For vLLM, use structured_outputs with regex in extra_body
+    if backend == LLMBackend.vllm:
+        if output_format == OutputFormat.regex and format_spec:
+            request_params["extra_body"] = {
+                "structured_outputs": {
+                    "regex": format_spec
+                }
+            }
+        elif output_format == OutputFormat.template and format_spec:
+            # Convert template to regex for vLLM guided generation
+            guided_regex = _template_to_regex(format_spec)
+            request_params["extra_body"] = {
+                "structured_outputs": {
+                    "regex": guided_regex
+                }
+            }
 
     # Make API call
     response = await client.chat.completions.create(**request_params)
@@ -101,9 +131,23 @@ async def generate_llm_response_stream(
         "model": model,
         "messages": messages,
         "temperature": float(parameters.get("temperature", 0.7)),
-        "max_tokens": int(parameters.get("max_tokens", 2048)),
+        "max_tokens": int(parameters.get("max_tokens", 1024)),
         "stream": True,
     }
+    
+    # Add format instructions to messages for better compliance
+    if output_format != OutputFormat.default and format_spec:
+        format_instruction = _get_format_instruction(output_format, format_spec)
+        messages_copy = list(messages)
+        if messages_copy and messages_copy[0].get("role") == "system":
+            messages_copy[0] = {
+                "role": "system",
+                "content": format_instruction + "\n\n" + messages_copy[0]["content"]
+            }
+        else:
+            messages_copy.insert(0, {"role": "system", "content": format_instruction})
+        request_params["messages"] = messages_copy
+
     
     # Handle structured output formats
     if output_format == OutputFormat.json and format_spec:
@@ -121,9 +165,24 @@ async def generate_llm_response_stream(
         except json.JSONDecodeError:
             # Fallback to older response_format if it's not a valid schema
             request_params["response_format"] = {"type": "json_object"}
-
-    if backend == LLMBackend.vllm and output_format == OutputFormat.regex and format_spec:
-        request_params["extra_body"] = {"guided_regex": format_spec}
+    
+    # For vLLM, use structured_outputs with regex in extra_body
+    if backend == LLMBackend.vllm:
+        if output_format == OutputFormat.regex and format_spec:
+            request_params["extra_body"] = {
+                "structured_outputs": {
+                    "regex": format_spec
+                }
+            }
+        elif output_format == OutputFormat.template and format_spec:
+            # Convert template to regex for vLLM guided generation
+            guided_regex = _template_to_regex(format_spec).replace('\n', '\\n')
+            print(guided_regex)
+            request_params["extra_body"] = {
+                "structured_outputs": {
+                    "regex": guided_regex
+                }
+            }
 
     # Make streaming API call
     stream = await client.chat.completions.create(**request_params)
@@ -140,9 +199,58 @@ def _validate_regex_response(content: str, pattern: str) -> bool:
         return False
 
 
+def _template_to_regex(template: str) -> str:
+    """Convert a template with [GEN] placeholders to a regex pattern"""
+    if not template:
+        return ".+"
+    
+    # Decode escape sequences like \n to actual characters
+    if '\\n' in template or '\\t' in template:
+        template = template.encode().decode('unicode_escape')
+    
+    # Split by [GEN]
+    parts = template.split("[GEN]")
+    # Escape special regex characters in each part
+    escaped_parts = []
+    for part in parts:
+        # Escape regex special chars
+        escaped = part
+        for char in r'\.^$*+?{}[]|()':
+            escaped = escaped.replace(char, '\\' + char)
+        escaped_parts.append(escaped)
+    
+    # Join with .+ which matches any content (non-greedy to respect structure)
+    regex = ".+?".join(escaped_parts)
+    
+    # Make it match from start to end
+    return regex
+
+
+def _get_format_instruction(output_format: OutputFormat, format_spec: str) -> str:
+    """Generate clear format instruction for the LLM based on output format"""
+    if output_format == OutputFormat.template:
+        # Decode escape sequences like \n to actual newlines for display
+        display_template = format_spec.encode().decode('unicode_escape') if '\\n' in format_spec else format_spec
+        example = display_template.replace("[GEN]", "[content here]")
+        return (
+            f"You must respond ONLY in this EXACT format:\n{display_template}\n\n"
+            f"Replace [GEN] with appropriate content. Example result:\n{example}\n"
+            f"Do not add any explanations, greetings, or extra text. Only output the exact format shown above."
+        )
+    elif output_format == OutputFormat.regex:
+        return (
+            f"Your response must match this exact pattern: {format_spec}\n"
+            f"Do not add any explanations or extra text."
+        )
+    elif output_format == OutputFormat.json:
+        return "You must respond with valid JSON only. Do not add any explanations or extra text outside the JSON."
+    return ""
+
+
 def _validate_template_response(content: str, template: str) -> bool:
     """Validate that content fits the template structure"""
-    return bool(content.strip())
+    pattern = _template_to_regex(template)
+    return _validate_regex_response(content, pattern)
 
 
 async def get_available_models(backend: LLMBackend, parameters: Dict[str, Any]) -> List[str]:

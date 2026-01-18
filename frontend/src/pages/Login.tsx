@@ -34,7 +34,7 @@ export default function Login() {
 
   return (
     <div className={`min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden ${
-      darkMode ? 'bg-zinc-950 text-zinc-100' : 'bg-zinc-50 text-zinc-900'
+      darkMode ? 'bg-zinc-950 text-zinc-100' : 'bg-white text-zinc-900'
     }`}>
       {/* Decorative Blur Elements */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
@@ -81,7 +81,7 @@ export default function Login() {
               <label className={`block text-[10px] font-black uppercase tracking-widest pl-1 ${
                 darkMode ? 'text-zinc-500' : 'text-zinc-400'
               }`}>
-                Access Key
+                Password
               </label>
               <div className="relative group">
                 <input

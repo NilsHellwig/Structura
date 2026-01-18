@@ -30,7 +30,14 @@ export default function Chat() {
   }, [isAuthenticated, navigate]);
 
   useEffect(() => {
-    useChatStore.getState().loadConversations().then(() => setLoading(false));
+    const initChat = async () => {
+      await Promise.all([
+        useChatStore.getState().loadConversations(),
+        useChatStore.getState().loadBackendSettings()
+      ]);
+      setLoading(false);
+    };
+    initChat();
   }, []);
 
   useEffect(() => {
@@ -96,7 +103,7 @@ export default function Chat() {
 
   return (
     <div className={`h-screen flex overflow-hidden ${
-      darkMode ? 'bg-zinc-950 text-zinc-100' : 'bg-zinc-50 text-zinc-900'
+      darkMode ? 'bg-zinc-950 text-zinc-100' : 'bg-white text-zinc-900'
     }`}>
       <IntroModal />
       <Sidebar

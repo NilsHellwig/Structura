@@ -31,7 +31,7 @@ export default function ChatArea() {
 
   const handleStartEdit = (messageId: number, content: string) => {
     setEditingMessageId(messageId);
-    setEditContent(content);
+    setEditContent(content.split('%-%-%')[0].trim());
   };
 
   const handleCancelEdit = () => {
@@ -218,32 +218,38 @@ export default function ChatArea() {
                         </div>
                       ) : (
                         <p className="text-sm leading-relaxed font-bold whitespace-pre-wrap break-words">
-                          {message.content}
+                          {message.content.split('%-%-%')[0].trim()}
                         </p>
                       )
                     ) : (
                       <>
                         <div className="text-sm leading-relaxed overflow-x-auto no-scrollbar font-normal">
                           {message.content ? (
-                            <MarkdownRenderer 
-                              content={
-                                message.output_format === 'json' && message.content && !message.content.trim().startsWith('```')
-                                  ? (
-                                      (() => {
-                                        try {
-                                          if (message.content.trim().startsWith('{') || message.content.trim().startsWith('[')) {
-                                            const parsed = JSON.parse(message.content);
-                                            return `\`\`\`json\n${JSON.stringify(parsed, null, 2)}\n\`\`\``;
+                            (message.output_format === 'template' || message.output_format === 'regex') ? (
+                              <div className="whitespace-pre-wrap break-words">
+                                {message.content}
+                              </div>
+                            ) : (
+                              <MarkdownRenderer 
+                                content={
+                                  message.output_format === 'json' && message.content && !message.content.trim().startsWith('```')
+                                    ? (
+                                        (() => {
+                                          try {
+                                            if (message.content.trim().startsWith('{') || message.content.trim().startsWith('[')) {
+                                              const parsed = JSON.parse(message.content);
+                                              return `\`\`\`json\n${JSON.stringify(parsed, null, 2)}\n\`\`\``;
+                                            }
+                                            return `\`\`\`json\n${message.content}\n\`\`\``;
+                                          } catch (e) {
+                                            return `\`\`\`json\n${message.content}\n\`\`\``;
                                           }
-                                          return `\`\`\`json\n${message.content}\n\`\`\``;
-                                        } catch (e) {
-                                          return `\`\`\`json\n${message.content}\n\`\`\``;
-                                        }
-                                      })()
-                                    )
-                                  : message.content
-                              } 
-                            />
+                                        })()
+                                      )
+                                    : message.content
+                                } 
+                              />
+                            )
                           ) : (
                             <div className="flex gap-1.2 py-2">
                               <motion.div

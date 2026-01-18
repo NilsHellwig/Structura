@@ -70,8 +70,8 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
               <code
                 className={`px-1.5 py-0.5 rounded font-mono text-xs ${
                   darkMode
-                    ? 'bg-gray-800 text-pink-400'
-                    : 'bg-gray-100 text-pink-600'
+                    ? 'bg-[#0d1117] text-pink-400'
+                    : 'bg-zinc-100 text-pink-600'
                 }`}
                 {...props}
               >
@@ -99,14 +99,14 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
                   onClick={handleCopy}
                   className={`absolute top-3 right-3 px-2.5 py-1.5 text-xs font-medium rounded-md transition-all opacity-0 group-hover:opacity-100 ${
                     darkMode
-                      ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
-                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200'
+                      : 'bg-zinc-200 hover:bg-zinc-300 text-zinc-700'
                   }`}
                 >
                   {copied ? 'Copied!' : 'Copy'}
                 </button>
                 <pre className={`p-4 rounded-xl overflow-x-auto ${
-                  darkMode ? 'bg-[#0a0a0a]' : 'bg-gray-900 text-gray-100'
+                  darkMode ? 'bg-[#0d1117]' : 'bg-[#0d1117] text-gray-100'
                 }`}>
                   {children}
                 </pre>

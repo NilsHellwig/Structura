@@ -84,8 +84,8 @@ export default function IntroModal() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className={`flex gap-6 p-6 rounded-[2rem] transition-all border border-transparent ${
-                    darkMode ? 'bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/5' : 'bg-zinc-50/50 hover:bg-zinc-100/50 hover:border-zinc-200/50'
+                  className={`flex gap-6 p-6 rounded-[2rem] transition-all border ${
+                    darkMode ? 'bg-white/[0.02] border-transparent hover:bg-white/[0.04] hover:border-white/5' : 'bg-white border-zinc-100 hover:border-zinc-200 shadow-sm'
                   }`}
                 >
                   <div className={`w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center ${
@@ -107,8 +107,8 @@ export default function IntroModal() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className={`flex gap-6 p-6 rounded-[2rem] transition-all border border-transparent ${
-                    darkMode ? 'bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/5' : 'bg-zinc-50/50 hover:bg-zinc-100/50 hover:border-zinc-200/50'
+                  className={`flex gap-6 p-6 rounded-[2rem] transition-all border ${
+                    darkMode ? 'bg-white/[0.02] border-transparent hover:bg-white/[0.04] hover:border-white/5' : 'bg-white border-zinc-100 hover:border-zinc-200 shadow-sm'
                   }`}
                 >
                   <div className={`w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center ${
@@ -130,8 +130,8 @@ export default function IntroModal() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className={`flex gap-6 p-6 rounded-[2rem] transition-all border border-transparent ${
-                    darkMode ? 'bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/5' : 'bg-zinc-50/50 hover:bg-zinc-100/50 hover:border-zinc-200/50'
+                  className={`flex gap-6 p-6 rounded-[2rem] transition-all border ${
+                    darkMode ? 'bg-white/[0.02] border-transparent hover:bg-white/[0.04] hover:border-white/5' : 'bg-white border-zinc-100 hover:border-zinc-200 shadow-sm'
                   }`}
                 >
                   <div className={`w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center ${

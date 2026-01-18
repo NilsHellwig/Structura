@@ -7,7 +7,7 @@ from app.models import Message, Conversation, MessageRole
 from app.schemas.message import LLMBackend, OutputFormat
 from app.services.llm import get_available_models, generate_llm_response_stream
 from app.dependencies import get_current_user
-from app.models import User
+from app.models import User, BackendSetting
 from pydantic import BaseModel
 import json
 from datetime import datetime
@@ -35,11 +35,36 @@ class GenerateRequest(BaseModel):
     message_id: Optional[int] = None
 
 
+async def _get_merged_parameters(db: Session, user_id: int, backend: str, request_params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Merge provided parameters with stored backend settings"""
+    params = request_params.copy() if request_params else {}
+    
+    # Load stored settings
+    setting = db.query(BackendSetting).filter(
+        BackendSetting.user_id == user_id,
+        BackendSetting.backend == backend
+    ).first()
+    
+    if setting:
+        if not params.get("base_url") and setting.base_url:
+            params["base_url"] = setting.base_url
+        if not params.get("api_key") and setting.api_key:
+            params["api_key"] = setting.api_key
+            
+    return params
+
+
 @router.post("/models", response_model=ModelsResponse)
-async def list_models(request: ModelsRequest):
+async def list_models(
+    request: ModelsRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     """Get available models for a specific backend"""
     try:
-        models = await get_available_models(request.backend, request.parameters)
+        # Merge with stored settings
+        params = await _get_merged_parameters(db, current_user.id, request.backend, request.parameters)
+        models = await get_available_models(request.backend, params)
         return ModelsResponse(models=models)
     except Exception as e:
         raise HTTPException(
@@ -56,6 +81,9 @@ async def generate(
 ):
     """Generate a streaming response from the LLM"""
     try:
+        # Merge parameters with stored settings
+        merged_params = await _get_merged_parameters(db, current_user.id, request.backend, request.parameters)
+        
         # Verify conversation belongs to user
         conversation = db.query(Conversation).filter(
             Conversation.id == request.conversation_id,
@@ -123,7 +151,7 @@ async def generate(
                 messages=llm_messages,
                 output_format=request.output_format,
                 format_spec=request.format_spec,
-                parameters=request.parameters or {}
+                parameters=merged_params
             ):
                 if chunk:
                     accumulated_content += chunk

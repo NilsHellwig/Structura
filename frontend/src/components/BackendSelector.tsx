@@ -40,7 +40,7 @@ export default function BackendSelector() {
           className={`z-[100] min-w-[200px] rounded-[1.5rem] border shadow-2xl p-2 backdrop-blur-3xl animate-in fade-in zoom-in duration-200 ${
             darkMode
               ? 'bg-zinc-950/80 border-white/5 shadow-black/50'
-              : 'bg-white/80 border-zinc-200 shadow-zinc-200/50'
+              : 'bg-white border-zinc-200 shadow-zinc-200/50'
           }`}
           sideOffset={12}
         >
@@ -63,7 +63,7 @@ export default function BackendSelector() {
                     : 'bg-zinc-950 text-white shadow-xl shadow-zinc-950/20'
                   : darkMode
                     ? 'text-zinc-500 hover:bg-white/5 hover:text-white'
-                    : 'text-zinc-400 hover:bg-zinc-100/80 hover:text-black'
+                    : 'text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900 border border-transparent hover:border-zinc-100'
               }`}
             >
               <div className="flex items-center gap-3">

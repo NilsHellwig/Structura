@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { PaperPlaneRight, CircleNotch, StopCircle, Code } from 'phosphor-react';
+import { PaperPlaneRight, CircleNotch, StopCircle } from 'phosphor-react';
 import toast from 'react-hot-toast';
 import { useChatStore } from '../store/chatStore';
 import { useUIStore } from '../store/uiStore';
@@ -72,23 +72,6 @@ export default function PromptEditor() {
     }
   };
 
-  const handleInsertFormat = () => {
-    if (outputFormat === 'default') return;
-    
-    let textToInsert = '';
-    if (outputFormat === 'json') {
-      textToInsert = `\n\nPlease answer exactly in this JSON format:\n\`\`\`json\n${formatSpec}\n\`\`\``;
-    } else if (outputFormat === 'template') {
-      textToInsert = `\n\nUse the following template for your answer:\n${formatSpec}`;
-    } else if (outputFormat === 'regex') {
-      textToInsert = `\n\nYour answer must exactly match the following regex: ${formatSpec}`;
-    }
-
-    setPrompt((prompt || '') + textToInsert);
-    // Focus back to textarea
-    textareaRef.current?.focus();
-  };
-
   const handleStop = () => {
     stopGeneration();
     toast.success('Generierung gestoppt');
@@ -140,20 +123,6 @@ export default function PromptEditor() {
             rows={1}
           />
           <div className="flex items-center gap-2 pb-1">
-            {!isLoading && outputFormat !== 'default' && (
-              <button
-                onClick={handleInsertFormat}
-                title="Insert Format"
-                className={`flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-2xl transition-all ${
-                  darkMode
-                    ? 'text-zinc-400 hover:text-blue-400 hover:bg-zinc-800/50'
-                    : 'text-zinc-400 hover:text-blue-600 hover:bg-zinc-100'
-                }`}
-              >
-                <Code size={22} weight="bold" />
-              </button>
-            )}
-            
             {isLoading ? (
               <button
                 onClick={handleStop}

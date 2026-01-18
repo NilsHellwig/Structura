@@ -49,7 +49,7 @@ export default function Sidebar({
           exit={{ width: 0, opacity: 0 }}
           transition={{ duration: 0.2 }}
           className={`flex-shrink-0 border-r flex flex-col backdrop-blur-3xl ${
-            darkMode ? 'bg-zinc-950/50 border-zinc-800' : 'bg-zinc-50/80 border-zinc-100'
+            darkMode ? 'bg-zinc-950/50 border-zinc-800' : 'bg-white border-zinc-100'
           }`}
         >
           {/* Header */}
@@ -131,7 +131,7 @@ export default function Sidebar({
                       : 'bg-zinc-900 text-white shadow-xl shadow-black/10'
                     : darkMode
                     ? 'text-zinc-500 hover:bg-zinc-900/50 hover:text-zinc-200'
-                    : 'text-zinc-500 hover:bg-zinc-200/50 hover:text-zinc-900'
+                    : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'
                 }`}
               >
                 {editingId === conv.id ? (
@@ -238,7 +238,7 @@ export default function Sidebar({
           animate={{ width: 68 }}
           exit={{ width: 0 }}
           className={`flex-shrink-0 border-r flex flex-col items-center py-6 gap-4 ${
-            darkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-50 border-zinc-200'
+            darkMode ? 'bg-zinc-950 border-zinc-800' : 'bg-white border-zinc-100'
           }`}
         >
           <Tooltip content="Expand" side="right">

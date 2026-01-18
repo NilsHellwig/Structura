@@ -7,17 +7,24 @@ import api from '../lib/api';
 
 export default function ModelSelector() {
   const darkMode = useUIStore((state) => state.darkMode);
-  const { backend, model, setModel } = useChatStore();
+  const { backend, model, setModel, llmParameters } = useChatStore();
   const [open, setOpen] = useState(false);
   const [models, setModels] = useState<string[]>([]);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchModels = async () => {
+      // Clear models immediately when backend or key parameters change to avoid stale data
+      setModels([]);
+
       try {
         const response = await api.post('/llm/models', {
           backend,
-          parameters: {},
+          parameters: llmParameters,
         });
+        
+        if (!isMounted) return;
+
         const fetchedModels = response.data.models || [];
         setModels(fetchedModels);
 
@@ -25,13 +32,17 @@ export default function ModelSelector() {
           setModel('');
         }
       } catch (error) {
+        if (!isMounted) return;
         console.error('Failed to fetch models:', error);
         setModels([]);
       }
     };
 
     fetchModels();
-  }, [backend]);
+    return () => {
+      isMounted = false;
+    };
+  }, [backend, llmParameters.base_url, llmParameters.api_key, setModel]);
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
@@ -55,7 +66,7 @@ export default function ModelSelector() {
           className={`z-[100] min-w-[240px] rounded-[1.5rem] border shadow-2xl p-2 backdrop-blur-3xl animate-in fade-in zoom-in duration-200 ${
             darkMode
               ? 'bg-zinc-950/80 border-white/5 shadow-black/50'
-              : 'bg-white/80 border-zinc-200 shadow-zinc-200/50'
+              : 'bg-white border-zinc-200 shadow-zinc-200/50'
           }`}
           sideOffset={12}
           align="end"
@@ -80,7 +91,7 @@ export default function ModelSelector() {
                       : 'bg-zinc-950 text-white shadow-xl shadow-zinc-950/20'
                     : darkMode
                       ? 'text-zinc-500 hover:bg-white/5 hover:text-white'
-                      : 'text-zinc-400 hover:bg-zinc-100/80 hover:text-black'
+                      : 'text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900 border border-transparent hover:border-zinc-100'
                 }`}
               >
                 <span className="truncate">{m}</span>

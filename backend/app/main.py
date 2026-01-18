@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.api import auth, conversations, messages, formats, llm
+from app.api import auth, conversations, messages, formats, llm, settings
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -29,6 +29,7 @@ app.include_router(conversations.router, prefix="/api")
 app.include_router(messages.router, prefix="/api")
 app.include_router(formats.router, prefix="/api")
 app.include_router(llm.router, prefix="/api")
+app.include_router(settings.router, prefix="/api")
 
 
 @app.get("/")

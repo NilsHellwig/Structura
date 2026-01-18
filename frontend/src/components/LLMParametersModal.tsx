@@ -9,11 +9,11 @@ interface LLMParametersModalProps {
 }
 
 export default function LLMParametersModal({ onClose }: LLMParametersModalProps) {
-  const { backend, llmParameters, setLLMParameters } = useChatStore();
+  const { backend, llmParameters, setLLMParameters, updateBackendSetting } = useChatStore();
   const darkMode = useUIStore((state) => state.darkMode);
   
   const [temperature, setTemperature] = useState(llmParameters.temperature || 0.7);
-  const [maxTokens, setMaxTokens] = useState(llmParameters.max_tokens || 2048);
+  const [maxTokens, setMaxTokens] = useState(llmParameters.max_tokens || 1024);
   const [topP, setTopP] = useState(llmParameters.top_p || 1.0);
   const [apiKey, setApiKey] = useState(llmParameters.api_key || '');
   const [baseUrl, setBaseUrl] = useState(
@@ -21,22 +21,20 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
     (backend === 'vllm' ? 'http://localhost:8000' : 'http://localhost:11434')
   );
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const params: Record<string, any> = {
       temperature,
       max_tokens: maxTokens,
       top_p: topP,
+      base_url: baseUrl,
+      api_key: apiKey
     };
     
-    if (backend === 'openai' && apiKey) {
-      params.api_key = apiKey;
-    }
-    
-    if (backend !== 'openai' && baseUrl) {
-      params.base_url = baseUrl;
-    }
-    
     setLLMParameters(params);
+    
+    // Persist base_url and api_key to backend
+    await updateBackendSetting(backend, baseUrl, apiKey);
+    
     onClose();
   };
 
@@ -57,7 +55,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
         <div className="px-10 pt-10 pb-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-              darkMode ? 'bg-zinc-900 border border-white/10' : 'bg-zinc-50 border border-zinc-200'
+              darkMode ? 'bg-zinc-900 border border-white/10' : 'bg-white border border-zinc-200 shadow-sm'
             }`}>
               <Faders size={24} weight="fill" className="text-blue-500" />
             </div>
@@ -73,7 +71,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
           <button
             onClick={onClose}
             className={`p-3 rounded-2xl transition-all ${
-              darkMode ? 'hover:bg-white/5 text-zinc-500 hover:text-white' : 'hover:bg-zinc-100 text-zinc-400 hover:text-black'
+              darkMode ? 'hover:bg-white/5 text-zinc-500 hover:text-white' : 'hover:bg-zinc-100/80 text-zinc-400 hover:text-black shadow-sm'
             }`}
           >
             <X size={20} weight="bold" />
@@ -89,7 +87,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
                 Temperature
               </label>
               <span className={`text-[10px] font-mono font-black px-2 py-1 rounded-lg ${
-                darkMode ? 'bg-white/5 text-blue-400' : 'bg-zinc-100 text-blue-600'
+                darkMode ? 'bg-white/5 text-blue-400' : 'bg-zinc-50 text-blue-600 border border-zinc-100 shadow-sm'
               }`}>
                 {temperature.toFixed(1)}
               </span>
@@ -168,7 +166,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
                 className={`w-full h-14 px-6 rounded-2xl border outline-none font-bold text-sm transition-all ${
                   darkMode
                     ? 'bg-white/5 border-white/5 text-white placeholder-zinc-700 focus:border-white/10'
-                    : 'bg-zinc-50 border-zinc-200 text-black placeholder-zinc-400 focus:border-black'
+                    : 'bg-white border-zinc-200 text-black placeholder-zinc-400 focus:border-black shadow-sm'
                 }`}
               />
             </div>
@@ -189,7 +187,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
                 className={`w-full h-14 px-6 rounded-2xl border outline-none font-bold text-sm transition-all ${
                   darkMode
                     ? 'bg-white/5 border-white/5 text-white placeholder-zinc-700 focus:border-white/10'
-                    : 'bg-zinc-50 border-zinc-200 text-black placeholder-zinc-400 focus:border-black'
+                    : 'bg-white border-zinc-200 text-black placeholder-zinc-400 focus:border-black shadow-sm'
                 }`}
               />
             </div>
@@ -199,13 +197,13 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
             <button
               onClick={() => {
                 setTemperature(0.7);
-                setMaxTokens(2048);
+                setMaxTokens(1024);
                 setTopP(1.0);
               }}
               className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-3 transition-all ${
                 darkMode 
                   ? 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border border-white/5' 
-                  : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200 hover:text-black border border-zinc-200/50'
+                  : 'bg-white text-zinc-400 hover:bg-zinc-50 hover:text-black border border-zinc-200 shadow-sm'
               }`}
             >
               <ArrowsClockwise size={20} weight="bold" />

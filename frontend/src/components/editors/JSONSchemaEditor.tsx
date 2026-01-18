@@ -247,7 +247,7 @@ export default function JSONSchemaEditor() {
               onChange={(e) => setSchemaJson(e.target.value)}
               className={`w-full px-6 py-5 font-mono text-[13px] rounded-3xl border transition-all outline-none min-h-[350px] leading-relaxed resize-none ${
                 darkMode
-                  ? 'bg-zinc-950 border-zinc-800 focus:border-zinc-700 focus:bg-zinc-900/50 text-zinc-300'
+                  ? 'bg-[#0d1117] border-zinc-800 focus:border-zinc-700 focus:bg-[#0d1117] text-zinc-300'
                   : 'bg-zinc-50 border-zinc-200 focus:border-zinc-300 focus:bg-white text-zinc-800'
               } ${!isValid ? 'border-red-500/50 focus:border-red-500' : ''}`}
               placeholder='{ "type": "object", ... }'
