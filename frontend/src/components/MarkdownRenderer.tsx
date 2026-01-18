@@ -71,7 +71,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
                 className={`px-1.5 py-0.5 rounded font-mono text-xs ${
                   darkMode
                     ? 'bg-[#0d1117] text-pink-400'
-                    : 'bg-zinc-100 text-pink-600'
+                    : 'bg-[#0d1117] text-pink-600'
                 }`}
                 {...props}
               >

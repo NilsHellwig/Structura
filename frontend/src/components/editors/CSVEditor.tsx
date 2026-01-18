@@ -211,7 +211,7 @@ export default function CSVEditor() {
             }`}
           >
             <FloppyDisk size={18} weight="bold" />
-            {activePresetId ? 'Update' : 'Commit'}
+            {activePresetId ? 'Update' : 'Save'}
           </button>
         </div>
       </div>

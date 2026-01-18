@@ -307,7 +307,7 @@ export default function JSONSchemaEditor() {
             }`}
           >
             <FloppyDisk size={18} weight="bold" />
-            {activeSchemaId ? 'Update' : 'Commit'}
+            {activeSchemaId ? 'Update' : 'Save'}
           </button>
         </div>
       </div>

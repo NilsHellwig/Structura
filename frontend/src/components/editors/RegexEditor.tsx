@@ -234,7 +234,7 @@ export default function RegexEditor() {
             }`}
           >
             <FloppyDisk size={18} weight="bold" />
-            {activePatternId ? 'Update' : 'Commit'}
+            {activePatternId ? 'Update' : 'Save'}
           </button>
         </div>
       </div>

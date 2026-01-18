@@ -184,7 +184,7 @@ export default function TemplateEditor() {
             }`}
           >
             <FloppyDisk size={18} weight="bold" />
-            {activeTemplateId ? 'Update' : 'Commit'}
+            {activeTemplateId ? 'Update' : 'Save'}
           </button>
         </div>
       </div>

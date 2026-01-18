@@ -218,7 +218,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
               }`}
             >
               <FloppyDisk size={20} weight="bold" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Commit Changes</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Save</span>
             </button>
           </div>
         </div>
