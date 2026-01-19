@@ -55,7 +55,7 @@ export default function ModelSelector() {
               : 'text-zinc-400 hover:text-black hover:bg-zinc-100'
           }`}
         >
-          <Sparkle size={16} weight="fill" className="text-blue-500" />
+          <Sparkle size={16} weight="fill" className="text-yellow-500" />
           <span className="truncate max-w-[120px]">{model || 'SELECT MODEL'}</span>
           <CaretDown size={14} weight="bold" className="opacity-40" />
         </button>

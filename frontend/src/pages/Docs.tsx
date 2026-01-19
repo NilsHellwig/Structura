@@ -122,7 +122,7 @@ export default function Docs() {
           </button>
           
           <div className="flex items-center gap-3 mb-8">
-            <div className={`p-2 rounded-xl ${darkMode ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-500/10 text-blue-600'}`}>
+            <div className={`p-2 rounded-xl ${darkMode ? 'bg-yellow-500/10 text-yellow-500' : 'bg-yellow-500/10 text-yellow-600'}`}>
                 <BookOpen size={24} weight="bold" />
             </div>
             <div>
@@ -181,7 +181,7 @@ export default function Docs() {
                         to={`/docs/${child.id}`}
                         className={`block px-7 py-2 text-xs font-bold transition-all relative ${
                           currentPageId === child.id
-                            ? darkMode ? 'text-blue-400' : 'text-blue-600'
+                            ? darkMode ? 'text-yellow-500' : 'text-yellow-600'
                             : darkMode ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-500 hover:text-zinc-900'
                         }`}
                       >
@@ -189,7 +189,7 @@ export default function Docs() {
                           <motion.div 
                             layoutId="active-doc-indicator"
                             className={`absolute left-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full ${
-                              darkMode ? 'bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.5)]' : 'bg-blue-600'
+                              darkMode ? 'bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]' : 'bg-yellow-600'
                             }`}
                           />
                         )}

@@ -154,7 +154,7 @@ export default function CSVEditor() {
               darkMode ? 'border-zinc-900 bg-zinc-950/50' : 'border-zinc-100 bg-zinc-50/30'
             }`}>
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                darkMode ? 'bg-zinc-900 text-blue-400' : 'bg-white text-blue-600 shadow-sm'
+                darkMode ? 'bg-zinc-900 text-yellow-500' : 'bg-white text-yellow-600 shadow-sm'
               }`}>
                 <Table size={24} weight="bold" />
               </div>
@@ -235,7 +235,7 @@ export default function CSVEditor() {
                   darkMode
                     ? 'bg-zinc-950 border-zinc-900 hover:border-zinc-700 hover:bg-zinc-900/50'
                     : 'bg-white border-zinc-100 hover:border-zinc-200 hover:shadow-xl shadow-sm shadow-zinc-200/20'
-                } ${activePresetId === p.id ? 'ring-2 ring-blue-500/50' : ''}`}
+                } ${activePresetId === p.id ? 'ring-2 ring-yellow-500/50' : ''}`}
               >
                 <div className="flex-1 min-w-0 pr-6">
                   <div className={`text-[11px] font-black uppercase tracking-widest truncate ${darkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>

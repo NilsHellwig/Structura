@@ -341,7 +341,7 @@ export default function JSONSchemaEditor() {
                   darkMode
                     ? 'bg-zinc-950 border-zinc-900 hover:border-zinc-700 hover:bg-zinc-900/50'
                     : 'bg-white border-zinc-100 hover:border-zinc-200 hover:shadow-xl shadow-sm shadow-zinc-200/20'
-                } ${activeSchemaId === s.id ? 'ring-2 ring-blue-500/50' : ''}`}
+                } ${activeSchemaId === s.id ? 'ring-2 ring-yellow-500/50' : ''}`}
               >
                 <div className="flex-1 min-w-0 pr-6">
                   <div className={`text-[11px] font-black uppercase tracking-widest truncate ${darkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>

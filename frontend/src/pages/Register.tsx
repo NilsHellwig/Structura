@@ -50,7 +50,7 @@ export default function Register() {
       darkMode ? 'bg-zinc-950 text-zinc-100' : 'bg-white text-zinc-900'
     }`}>
       {/* Decorative Blur Elements */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-yellow-500/10 rounded-full blur-[120px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-zinc-500/10 rounded-full blur-[120px]" />
 
       <div className="w-full max-w-md relative z-10">
@@ -81,8 +81,8 @@ export default function Register() {
                   onChange={(e) => setUsername(e.target.value)}
                   className={`w-full px-5 py-4 text-sm font-bold rounded-2xl border outline-none transition-all ${
                     darkMode
-                      ? 'bg-zinc-900/50 border-zinc-800 text-white placeholder-zinc-700 focus:border-blue-500/50 focus:bg-zinc-900'
-                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-blue-500/30 focus:bg-white'
+                      ? 'bg-zinc-900/50 border-zinc-800 text-white placeholder-zinc-700 focus:border-yellow-500/50 focus:bg-zinc-900'
+                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-yellow-500/30 focus:bg-white'
                   }`}
                   placeholder="Username"
                   required
@@ -103,8 +103,8 @@ export default function Register() {
                   onChange={(e) => setPassword(e.target.value)}
                   className={`w-full px-5 py-4 text-sm font-bold rounded-2xl border outline-none transition-all ${
                     darkMode
-                      ? 'bg-zinc-900/50 border-zinc-800 text-white placeholder-zinc-700 focus:border-blue-500/50 focus:bg-zinc-900'
-                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-blue-500/30 focus:bg-white'
+                      ? 'bg-zinc-900/50 border-zinc-800 text-white placeholder-zinc-700 focus:border-yellow-500/50 focus:bg-zinc-900'
+                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-yellow-500/30 focus:bg-white'
                   }`}
                   placeholder="Password"
                   required
@@ -125,8 +125,8 @@ export default function Register() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className={`w-full px-5 py-4 text-sm font-bold rounded-2xl border outline-none transition-all ${
                     darkMode
-                      ? 'bg-zinc-900/50 border-zinc-800 text-white placeholder-zinc-700 focus:border-blue-500/50 focus:bg-zinc-900'
-                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-blue-500/30 focus:bg-white'
+                      ? 'bg-zinc-900/50 border-zinc-800 text-white placeholder-zinc-700 focus:border-yellow-500/50 focus:bg-zinc-900'
+                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-yellow-500/30 focus:bg-white'
                   }`}
                   placeholder="Confirm Password"
                   required
@@ -165,7 +165,7 @@ export default function Register() {
           Already have an account?{' '}
           <Link
             to="/login"
-            className={`${darkMode ? 'text-zinc-100 hover:text-blue-400' : 'text-zinc-900 hover:text-blue-600'} transition-colors ml-2`}
+            className={`${darkMode ? 'text-zinc-100 hover:text-yellow-500' : 'text-zinc-900 hover:text-yellow-600'} transition-colors ml-2`}
           >
             Login
           </Link>

@@ -91,7 +91,7 @@ export default function IntroModal() {
                   <div className={`w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center ${
                     darkMode ? 'bg-zinc-900 border border-white/5' : 'bg-white border border-zinc-200/50 shadow-sm'
                   }`}>
-                    <FileCode size={24} weight="fill" className="text-blue-500" />
+                    <FileCode size={24} weight="fill" className="text-yellow-500" />
                   </div>
                   <div className="space-y-1">
                     <h3 className={`text-sm font-black uppercase tracking-wider ${darkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>Structured Outputs</h3>

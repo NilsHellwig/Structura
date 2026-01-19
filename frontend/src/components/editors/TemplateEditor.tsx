@@ -92,7 +92,7 @@ export default function TemplateEditor() {
           </label>
           <div className={`px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${
             genCount > 0 
-              ? darkMode ? 'bg-zinc-900 border-zinc-800 text-blue-400' : 'bg-zinc-50 border-zinc-100 text-blue-600'
+              ? darkMode ? 'bg-zinc-900 border-zinc-800 text-yellow-500' : 'bg-zinc-50 border-zinc-100 text-yellow-600'
               : 'bg-red-500/10 text-red-500 border-red-500/20'
           }`}>
             {genCount} ACTIVE SLOTS
@@ -208,7 +208,7 @@ export default function TemplateEditor() {
                   darkMode
                     ? 'bg-zinc-950 border-zinc-900 hover:border-zinc-700 hover:bg-zinc-900/50'
                     : 'bg-white border-zinc-100 hover:border-zinc-200 hover:shadow-xl shadow-sm shadow-zinc-200/20'
-                } ${activeTemplateId === t.id ? 'ring-2 ring-blue-500/50' : ''}`}
+                } ${activeTemplateId === t.id ? 'ring-2 ring-yellow-500/50' : ''}`}
               >
                 <div className="flex-1 min-w-0 pr-6">
                   <div className={`text-[11px] font-black uppercase tracking-widest truncate ${darkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>

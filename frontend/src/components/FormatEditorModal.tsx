@@ -21,12 +21,12 @@ export default function FormatEditorModal() {
 
   const getFormatIcon = () => {
     switch (outputFormat) {
-      case 'json': return <BracketsCurly size={24} weight="fill" className="text-blue-500" />;
-      case 'template': return <Selection size={24} weight="fill" className="text-blue-500" />;
-      case 'regex': return <Code size={24} weight="fill" className="text-blue-500" />;
-      case 'html': return <FileHtml size={24} weight="fill" className="text-green-500" />;
-      case 'csv': return <Table size={24} weight="fill" className="text-amber-500" />;
-      default: return <Sliders size={24} weight="fill" className="text-blue-500" />;
+      case 'json': return <BracketsCurly size={24} weight="fill" className="text-yellow-500" />;
+      case 'template': return <Selection size={24} weight="fill" className="text-yellow-500" />;
+      case 'regex': return <Code size={24} weight="fill" className="text-yellow-500" />;
+      case 'html': return <FileHtml size={24} weight="fill" className="text-yellow-500" />;
+      case 'csv': return <Table size={24} weight="fill" className="text-yellow-500" />;
+      default: return <Sliders size={24} weight="fill" className="text-yellow-500" />;
     }
   };
 
@@ -47,8 +47,8 @@ export default function FormatEditorModal() {
         <button
           className={`p-2 w-10 h-10 flex items-center justify-center rounded-2xl transition-all ${
             darkMode
-              ? 'bg-white/5 border border-white/5 text-zinc-400 hover:text-blue-400 hover:bg-white/10'
-              : 'bg-zinc-100 border border-zinc-200/50 text-zinc-500 hover:text-blue-600 hover:bg-zinc-200'
+              ? 'bg-white/5 border border-white/5 text-zinc-400 hover:text-yellow-500 hover:bg-white/10'
+              : 'bg-zinc-100 border border-zinc-200/50 text-zinc-500 hover:text-yellow-600 hover:bg-zinc-200'
           }`}
           title="Configure Format"
         >

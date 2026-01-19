@@ -185,9 +185,9 @@ export default function RegexEditor() {
       <div className={`p-6 rounded-3xl border flex gap-4 backdrop-blur-xl ${
         darkMode ? 'bg-zinc-900/40 border-zinc-800 text-zinc-400' : 'bg-zinc-50 border-zinc-200 text-zinc-500 shadow-sm shadow-zinc-200/50'
       }`}>
-        <Info size={24} weight="fill" className="flex-shrink-0 opacity-40 text-blue-500" />
+        <Info size={24} weight="fill" className="flex-shrink-0 opacity-40 text-yellow-500" />
         <div className="space-y-1">
-          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-500">Core Architecture Warning</p>
+          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-yellow-500">Core Architecture Warning</p>
           <p className="text-[10px] font-bold leading-relaxed opacity-70">
             Lookbehind <code className="font-mono bg-black/20 px-1.5 py-0.5 rounded-lg text-white">(?&lt;...)</code> and Lookahead <code className="font-mono bg-black/20 px-1.5 py-0.5 rounded-lg text-white">(?=...)</code> are not supported by the vLLM structured engine.
           </p>
@@ -258,7 +258,7 @@ export default function RegexEditor() {
                   darkMode
                     ? 'bg-zinc-950 border-zinc-900 hover:border-zinc-700 hover:bg-zinc-900/50'
                     : 'bg-white border-zinc-100 hover:border-zinc-200 hover:shadow-xl shadow-sm shadow-zinc-200/20'
-                } ${activePatternId === p.id ? 'ring-2 ring-blue-500/50' : ''}`}
+                } ${activePatternId === p.id ? 'ring-2 ring-yellow-500/50' : ''}`}
               >
                 <div className="flex-1 min-w-0 pr-6">
                   <div className={`text-[11px] font-black uppercase tracking-widest truncate ${darkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>

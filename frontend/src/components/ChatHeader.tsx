@@ -34,8 +34,8 @@ export default function ChatHeader() {
               onClick={() => setShowModal(true)}
               className={`p-2 w-9 h-9 flex items-center justify-center rounded-xl transition-all ${
                 darkMode
-                  ? 'text-zinc-500 hover:text-blue-400 hover:bg-zinc-800'
-                  : 'text-zinc-400 hover:text-blue-600 hover:bg-zinc-100'
+                  ? 'text-zinc-500 hover:text-yellow-500 hover:bg-zinc-800'
+                  : 'text-zinc-400 hover:text-yellow-600 hover:bg-zinc-100'
               }`}
             >
               <Gear size={18} weight="bold" />

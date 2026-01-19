@@ -57,7 +57,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
               darkMode ? 'bg-zinc-900 border border-white/10' : 'bg-white border border-zinc-200 shadow-sm'
             }`}>
-              <Faders size={24} weight="fill" className="text-blue-500" />
+              <Faders size={24} weight="fill" className="text-yellow-500" />
             </div>
             <div>
               <h2 className={`text-lg font-black tracking-[-0.02em] ${
@@ -87,7 +87,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
                 Temperature
               </label>
               <span className={`text-[10px] font-mono font-black px-2 py-1 rounded-lg ${
-                darkMode ? 'bg-white/5 text-blue-400' : 'bg-zinc-50 text-blue-600 border border-zinc-100 shadow-sm'
+                darkMode ? 'bg-white/5 text-yellow-500' : 'bg-zinc-50 text-yellow-600 border border-zinc-100 shadow-sm'
               }`}>
                 {temperature.toFixed(1)}
               </span>
@@ -99,7 +99,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
               step="0.1"
               value={temperature}
               onChange={(e) => setTemperature(parseFloat(e.target.value))}
-              className="slider-zinc w-full h-1.5 bg-zinc-200 dark:bg-white/5 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              className="slider-zinc w-full h-1.5 bg-zinc-200 dark:bg-white/5 rounded-lg appearance-none cursor-pointer accent-yellow-500"
             />
           </div>
 

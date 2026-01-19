@@ -20,7 +20,7 @@ export default function HTMLEditor() {
           darkMode ? 'border-zinc-900 bg-zinc-950/50' : 'border-zinc-100 bg-zinc-50/30'
         }`}>
           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-            darkMode ? 'bg-zinc-900 text-blue-400' : 'bg-white text-blue-600 shadow-sm'
+            darkMode ? 'bg-zinc-900 text-yellow-500' : 'bg-white text-yellow-600 shadow-sm'
           }`}>
             <Code size={24} weight="bold" />
           </div>

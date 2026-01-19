@@ -153,7 +153,7 @@ export default function ChatArea() {
       {!messages || messages.length === 0 ? (
         <div className="h-full flex items-center justify-center px-6 py-10 relative overflow-hidden">
           {/* Decorative Blur Background for Empty State */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-blue-500/5 rounded-full blur-[120px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-yellow-500/5 rounded-full blur-[120px]" />
           
           <div className="text-center max-w-sm relative z-10">
             <motion.h2
@@ -202,7 +202,7 @@ export default function ChatArea() {
                       </div>
                     ) : (
                       <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 ${
-                        darkMode ? 'bg-zinc-900 text-blue-400 border border-zinc-800' : 'bg-white text-blue-600 shadow-sm border border-zinc-100'
+                        darkMode ? 'bg-zinc-900 text-yellow-500 border border-zinc-800' : 'bg-white text-yellow-600 shadow-sm border border-zinc-100'
                       }`}>
                         <Robot size={22} weight="fill" />
                       </div>
@@ -225,7 +225,7 @@ export default function ChatArea() {
                         <button
                           onClick={() => handleRegenerate(index)}
                           className={`p-2 rounded-xl transition-all ${
-                            darkMode ? 'text-zinc-500 hover:text-blue-400 hover:bg-zinc-800' : 'text-zinc-400 hover:text-blue-500 hover:bg-zinc-100'
+                            darkMode ? 'text-zinc-500 hover:text-yellow-500 hover:bg-zinc-800' : 'text-zinc-400 hover:text-yellow-600 hover:bg-zinc-100'
                           }`}
                           title="Regenerate"
                         >

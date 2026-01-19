@@ -125,12 +125,12 @@ export default function Sidebar({
             {/* Search Input */}
             <div className="relative group px-1">
               <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 opacity-0 group-focus-within:opacity-100 blur-md ${
-                darkMode ? 'bg-blue-500/10' : 'bg-blue-500/5'
+                darkMode ? 'bg-yellow-500/10' : 'bg-yellow-500/5'
               }`} />
               <MagnifyingGlass 
                 size={14} 
                 className={`absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300 ${
-                  darkMode ? 'text-zinc-600 group-focus-within:text-blue-400' : 'text-zinc-400 group-focus-within:text-blue-500'
+                  darkMode ? 'text-zinc-600 group-focus-within:text-yellow-500' : 'text-zinc-400 group-focus-within:text-yellow-500'
                 }`} 
               />
               <input
@@ -140,8 +140,8 @@ export default function Sidebar({
                 placeholder="Search sessions..."
                 className={`w-full h-11 pl-10 pr-4 rounded-xl text-[12px] font-medium outline-none transition-all relative z-10 ${
                   darkMode
-                    ? 'bg-zinc-900/40 border border-zinc-800/50 focus:border-blue-500/30 focus:bg-zinc-900/80 text-zinc-200 placeholder:text-zinc-600'
-                    : 'bg-zinc-100/50 border border-zinc-200/50 focus:border-blue-200 focus:bg-white text-zinc-700 placeholder:text-zinc-400'
+                    ? 'bg-zinc-900/40 border border-zinc-800/50 focus:border-yellow-500/30 focus:bg-zinc-900/80 text-zinc-200 placeholder:text-zinc-600'
+                    : 'bg-zinc-100/50 border border-zinc-200/50 focus:border-yellow-200 focus:bg-white text-zinc-700 placeholder:text-zinc-400'
                 }`}
               />
             </div>
@@ -154,7 +154,7 @@ export default function Sidebar({
             }`}>
               <span>Recent Sessions</span>
               {searchQuery && (
-                <span className="text-[8px] bg-blue-500/10 text-blue-900 px-2 py-0.5 rounded-full font-bold tracking-tight">
+                <span className="text-[8px] bg-yellow-500/10 text-yellow-600 px-2 py-0.5 rounded-full font-bold tracking-tight">
                   {filteredConversations.length} MATCHES
                 </span>
               )}
@@ -243,8 +243,8 @@ export default function Sidebar({
               to="/docs"
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${
                 darkMode 
-                  ? 'text-zinc-500 hover:text-blue-400 hover:bg-blue-500/5' 
-                  : 'text-zinc-400 hover:text-blue-600 hover:bg-blue-50'
+                  ? 'text-zinc-500 hover:text-yellow-500 hover:bg-yellow-500/5' 
+                  : 'text-zinc-400 hover:text-yellow-600 hover:bg-yellow-50'
               }`}
             >
               <Book size={18} weight="bold" />

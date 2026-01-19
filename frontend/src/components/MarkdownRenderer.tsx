@@ -131,8 +131,8 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
               rel="noopener noreferrer"
               className={`underline underline-offset-2 hover:no-underline transition-colors ${
                 darkMode
-                  ? 'text-blue-400 hover:text-blue-300'
-                  : 'text-blue-600 hover:text-blue-500'
+                  ? 'text-yellow-500 hover:text-yellow-400'
+                  : 'text-yellow-600 hover:text-yellow-500'
               }`}
             >
               {children}

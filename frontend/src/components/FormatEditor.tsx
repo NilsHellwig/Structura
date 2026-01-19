@@ -58,7 +58,7 @@ export default function FormatEditor() {
         }`}
       >
         <div className="text-center relative">
-          <div className="absolute inset-0 bg-blue-500/5 blur-[40px] rounded-full" />
+          <div className="absolute inset-0 bg-yellow-500/5 blur-[40px] rounded-full" />
           <p className={`relative z-10 text-[10px] font-black uppercase tracking-[0.2em] leading-relaxed opacity-40 ${darkMode ? 'text-zinc-400' : 'text-zinc-500'}`}>
             {getFormatDescription()}
           </p>
@@ -80,7 +80,7 @@ export default function FormatEditor() {
       }`}>
         <div className="flex items-center gap-4">
           <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg ${
-            darkMode ? 'bg-zinc-900 text-blue-400 border border-zinc-800' : 'bg-zinc-50 text-blue-600 border border-zinc-100'
+            darkMode ? 'bg-zinc-900 text-yellow-500 border border-zinc-800' : 'bg-zinc-50 text-yellow-600 border border-zinc-100'
           }`}>
             {getFormatIcon()}
           </div>
