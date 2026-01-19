@@ -86,7 +86,14 @@ async def get_capabilities():
             OutputFormat.html, 
             OutputFormat.csv
         ],
-        LLMBackend.ollama: [OutputFormat.default, OutputFormat.json]
+        LLMBackend.ollama: [
+            OutputFormat.default, 
+            OutputFormat.json, 
+            OutputFormat.template, 
+            OutputFormat.regex, 
+            OutputFormat.html, 
+            OutputFormat.csv
+        ]
     }
 
 
@@ -158,41 +165,46 @@ async def generate(
         llm_messages = [{"role": m.role.value, "content": m.content} for m in history]
         
         async def stream_generator():
-            # Send the IDs of the messages to the client
-            yield f"data: {json.dumps({'user_message_id': user_message.id})}\n\n"
-            
-            accumulated_content = ""
-            async for chunk in generate_llm_response_stream(
-                backend=request.backend,
-                model=request.model,
-                messages=llm_messages,
-                output_format=request.output_format,
-                format_spec=request.format_spec,
-                parameters=merged_params
-            ):
-                if chunk:
-                    accumulated_content += chunk
-                    yield f"data: {json.dumps({'content': chunk})}\n\n"
-            
-            # Save assistant message once done
-            if accumulated_content:
-                assistant_message = Message(
-                    conversation_id=request.conversation_id,
-                    role=MessageRole.assistant,
-                    content=accumulated_content,
+            try:
+                # Send the IDs of the messages to the client
+                yield f"data: {json.dumps({'user_message_id': user_message.id})}\n\n"
+                
+                accumulated_content = ""
+                async for chunk in generate_llm_response_stream(
                     backend=request.backend,
                     model=request.model,
+                    messages=llm_messages,
                     output_format=request.output_format,
                     format_spec=request.format_spec,
-                    llm_parameters=request.parameters
-                )
-                db.add(assistant_message)
-                conversation.updated_at = datetime.utcnow()
-                db.commit()
-                db.refresh(assistant_message)
-                yield f"data: {json.dumps({'assistant_message_id': assistant_message.id})}\n\n"
+                    parameters=merged_params
+                ):
+                    if chunk:
+                        accumulated_content += chunk
+                        yield f"data: {json.dumps({'content': chunk})}\n\n"
                 
-            yield "data: [DONE]\n\n"
+                # Save assistant message once done
+                if accumulated_content:
+                    assistant_message = Message(
+                        conversation_id=request.conversation_id,
+                        role=MessageRole.assistant,
+                        content=accumulated_content,
+                        backend=request.backend,
+                        model=request.model,
+                        output_format=request.output_format,
+                        format_spec=request.format_spec,
+                        llm_parameters=request.parameters
+                    )
+                    db.add(assistant_message)
+                    conversation.updated_at = datetime.utcnow()
+                    db.commit()
+                    db.refresh(assistant_message)
+                    yield f"data: {json.dumps({'assistant_message_id': assistant_message.id})}\n\n"
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            finally:
+                yield "data: [DONE]\n\n"
 
         return StreamingResponse(
             stream_generator(),

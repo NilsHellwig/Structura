@@ -302,15 +302,20 @@ export const useChatStore = create<ChatState>((set, get) => {
       if (state.outputFormat !== 'default' && state.formatSpec) {
         let textToInsert = '';
         if (state.outputFormat === 'json') {
-          textToInsert = `\n\n%-%-%\nPlease answer exactly in this JSON format:\n\`\`\`json\n${state.formatSpec}\n\`\`\``;
+          textToInsert = `\n\n%-%-%\nYou must respond with valid JSON only. Do not add any explanations or extra text outside the JSON.`;
         } else if (state.outputFormat === 'template') {
-          textToInsert = `\n\n%-%-%\nUse the following template for your answer:\n\`\`\`\n${state.formatSpec}\n\`\`\``;
+          const displayTemplate = state.formatSpec.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+          textToInsert = `\n\n%-%-%\nYour response must look exactly like this:\n\`\`\`\n${displayTemplate}\n\`\`\`\n\nReplace the entire [GEN] tag with appropriate text content. Example result:\nDo not add any explanations, greetings, or extra text. Only output the exact format shown above.`;
         } else if (state.outputFormat === 'regex') {
-          textToInsert = `\n\n%-%-%\nYour answer must exactly match the following regex:\n\`\`\`\n${state.formatSpec}\n\`\`\``;
+          textToInsert = `\n\n%-%-%\nYour response must match this exact pattern: ${state.formatSpec}\nDo not add any explanations or extra text.`;
+        } else if (state.outputFormat === 'csv') {
+          textToInsert = `\n\n%-%-%\nYou must respond in CSV format${state.formatSpec ? ` with these exact columns: ${state.formatSpec}` : ''}. Do not add any explanations or extra text.`;
+        } else if (state.outputFormat === 'html') {
+          textToInsert = `\n\n%-%-%\nYou must respond with valid XML/HTML only. Do not add any explanations or extra text outside the tags.`;
         }
         
-        // Append only if it doesn't already contain this exact instruction
-        if (textToInsert && !promptToSend.includes(textToInsert)) {
+        // Append only if it doesn't already contain a format marker
+        if (textToInsert && !promptToSend.includes('%-%-%')) {
           promptToSend += textToInsert;
         }
       }

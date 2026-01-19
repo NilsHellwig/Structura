@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Robot, Copy, Check, PencilSimple, Trash, CheckCircle, XCircle, Sparkle, PaperPlaneRight, FileCsv, Table } from 'phosphor-react';
+import { Robot, Copy, Check, PencilSimple, Trash, CheckCircle, XCircle, Sparkle, PaperPlaneRight, FileCsv, Table, ArrowsClockwise, ArrowDown } from 'phosphor-react';
 import { useUIStore } from '../store/uiStore';
 import { useChatStore } from '../store/chatStore';
 import { useAuthStore } from '../store/authStore';
@@ -16,17 +16,51 @@ export default function ChatArea() {
   const sendMessage = useChatStore((state) => state.sendMessage);
   const user = useAuthStore((state) => state.user);
   
+  const scrollRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const [editingMessageId, setEditingMessageId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState('');
+
+  const handleScroll = useCallback(() => {
+    if (!scrollRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+    const isAtBottom = scrollHeight - scrollTop - clientHeight < 200;
+    setShowScrollButton(!isAtBottom);
+  }, []);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const handleCopy = (content: string, index: number) => {
     navigator.clipboard.writeText(content);
     setCopiedIndex(index);
     toast.success('Copied to clipboard');
     setTimeout(() => setCopiedIndex(null), 2000);
+  };
+
+  const handleRegenerate = async (index: number) => {
+    if (isLoading || index === 0) return;
+    // Find the last user message before this assistant message
+    let lastUserMessageIndex = -1;
+    for (let i = index - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') {
+        lastUserMessageIndex = i;
+        break;
+      }
+    }
+
+    if (lastUserMessageIndex !== -1) {
+      const userMsg = messages[lastUserMessageIndex];
+      // When resending, chatStore deletes everything after the editMessageId
+      // and triggers a new generation.
+      const rawContent = userMsg.content.split('%-%-%')[0].trim();
+      await sendMessage(rawContent, userMsg.id);
+      toast.success('Regenerating response...');
+    }
   };
 
   const handleCopyCSV = (content: string, separator: ',' | ';') => {
@@ -91,9 +125,31 @@ export default function ChatArea() {
   }, [messages]);
 
   return (
-    <div className={`flex-1 overflow-y-auto relative ${
-      darkMode ? 'bg-zinc-950' : 'bg-white'
-    }`}>
+    <div 
+      ref={scrollRef}
+      onScroll={handleScroll}
+      className={`flex-1 overflow-y-auto relative no-scrollbar ${
+        darkMode ? 'bg-zinc-950' : 'bg-white'
+      }`}
+    >
+      <AnimatePresence>
+        {showScrollButton && (
+          <motion.button
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+            onClick={scrollToBottom}
+            className={`fixed bottom-32 right-12 z-50 p-3 rounded-full shadow-2xl transition-all active:scale-90 border backdrop-blur-md ${
+              darkMode 
+                ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700' 
+                : 'bg-white border-zinc-100 text-zinc-500 hover:text-zinc-900 shadow-zinc-200/50'
+            }`}
+          >
+            <ArrowDown size={20} weight="bold" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       {!messages || messages.length === 0 ? (
         <div className="h-full flex items-center justify-center px-6 py-10 relative overflow-hidden">
           {/* Decorative Blur Background for Empty State */}
@@ -165,6 +221,17 @@ export default function ChatArea() {
                       >
                         {copiedIndex === index ? <Check size={16} weight="bold" /> : <Copy size={16} weight="bold" />}
                       </button>
+                      {message.role === 'assistant' && index === messages.length - 1 && !isLoading && (
+                        <button
+                          onClick={() => handleRegenerate(index)}
+                          className={`p-2 rounded-xl transition-all ${
+                            darkMode ? 'text-zinc-500 hover:text-blue-400 hover:bg-zinc-800' : 'text-zinc-400 hover:text-blue-500 hover:bg-zinc-100'
+                          }`}
+                          title="Regenerate"
+                        >
+                          <ArrowsClockwise size={16} weight="bold" />
+                        </button>
+                      )}
                       {message.role === 'user' && (
                         <button
                           onClick={() => handleStartEdit(message.id!, message.content)}

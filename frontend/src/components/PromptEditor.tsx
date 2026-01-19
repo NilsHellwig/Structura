@@ -126,10 +126,10 @@ export default function PromptEditor() {
             {isLoading ? (
               <button
                 onClick={handleStop}
-                className={`flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-2xl transition-all ${
+                className={`flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-2xl transition-all shadow-lg active:scale-95 ${
                   darkMode
-                    ? 'bg-zinc-800 text-red-400'
-                    : 'bg-zinc-100 text-red-600'
+                    ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20'
+                    : 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-100'
                 }`}
               >
                 <CircleNotch size={22} className="animate-spin absolute opacity-20" />
