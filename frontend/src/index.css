@@ -99,6 +99,24 @@ pre, code {
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
+/* Autofill Fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-transition: background-color 99999s ease-in-out 0s;
+  transition: background-color 99999s ease-in-out 0s;
+  -webkit-text-fill-color: inherit !important;
+}
+
+.dark input:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .dark .slider-zinc::-moz-range-thumb {
   background: #fafafa;
   border: 2px solid #18181b;

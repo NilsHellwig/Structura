@@ -204,7 +204,7 @@ export default function JSONSchemaEditor() {
         <div className={`flex p-1 rounded-2xl border backdrop-blur-xl ${darkMode ? 'bg-zinc-900/50 border-zinc-800' : 'bg-zinc-100 border-zinc-200 shadow-sm'}`}>
           <button
             onClick={() => setViewMode('gui')}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
               viewMode === 'gui'
                 ? (darkMode ? 'bg-white text-zinc-950 shadow-xl' : 'bg-zinc-900 text-white shadow-xl')
                 : 'text-zinc-500 hover:text-zinc-300'
@@ -215,7 +215,7 @@ export default function JSONSchemaEditor() {
           </button>
           <button
             onClick={() => setViewMode('code')}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
               viewMode === 'code'
                 ? (darkMode ? 'bg-white text-zinc-950 shadow-xl' : 'bg-zinc-900 text-white shadow-xl')
                 : 'text-zinc-500 hover:text-zinc-300'
@@ -275,7 +275,7 @@ export default function JSONSchemaEditor() {
         <div className="flex gap-4">
           <button
             onClick={resetEditor}
-            className={`h-11 px-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-95 ${
+            className={`h-11 px-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-95 cursor-pointer ${
               darkMode 
                 ? 'bg-zinc-800 text-zinc-400 border border-zinc-800 hover:text-white hover:border-zinc-700 hover:bg-zinc-700' 
                 : 'bg-zinc-100 text-zinc-500 border border-zinc-200 hover:text-zinc-900 hover:border-zinc-300 hover:bg-zinc-200'
@@ -301,6 +301,8 @@ export default function JSONSchemaEditor() {
             onClick={saveSchema}
             disabled={!saveName.trim() || !isValid}
             className={`h-11 px-6 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 transition-all active:scale-[0.98] disabled:opacity-30 disabled:grayscale ${
+              !saveName.trim() || !isValid ? '' : 'cursor-pointer'
+            } ${
               darkMode 
                 ? 'bg-white text-zinc-950 hover:bg-zinc-200 shadow-xl' 
                 : 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-xl shadow-zinc-900/10'
@@ -323,7 +325,7 @@ export default function JSONSchemaEditor() {
           </label>
           <button
             onClick={seedExamples}
-            className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl border transition-all ${
+            className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
               darkMode ? 'border-zinc-900 text-zinc-600 hover:text-zinc-300 hover:border-zinc-700' : 'border-zinc-200 text-zinc-400 hover:text-zinc-600 hover:border-zinc-300 shadow-sm shadow-zinc-200/10'
             }`}
           >
@@ -354,7 +356,7 @@ export default function JSONSchemaEditor() {
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={(e) => { e.stopPropagation(); deleteSchema(s.id); }}
-                    className={`p-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all ${
+                    className={`p-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all cursor-pointer ${
                       darkMode ? 'hover:bg-red-900/40 text-red-400' : 'hover:bg-red-50 text-red-600 shadow-sm border border-red-50'
                     }`}
                   >

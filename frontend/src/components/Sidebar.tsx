@@ -74,7 +74,7 @@ export default function Sidebar({
               <Tooltip content="Information">
                 <button
                   onClick={() => setShowIntro(true)}
-                  className={`p-1.5 rounded-lg transition-colors ${
+                  className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                     darkMode
                       ? 'text-zinc-500 hover:text-zinc-100 hover:bg-zinc-900/50'
                       : 'text-zinc-400 hover:text-zinc-900 hover:bg-zinc-200/50'
@@ -86,7 +86,7 @@ export default function Sidebar({
               <Tooltip content={darkMode ? 'Light' : 'Dark'}>
                 <button
                   onClick={toggleDarkMode}
-                  className={`p-1.5 rounded-lg transition-colors ${
+                  className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                     darkMode
                       ? 'text-zinc-500 hover:text-zinc-100 hover:bg-zinc-900/50'
                       : 'text-zinc-400 hover:text-zinc-900 hover:bg-zinc-200/50'
@@ -97,7 +97,7 @@ export default function Sidebar({
               </Tooltip>
               <button
                 onClick={toggleSidebar}
-                className={`p-1.5 rounded-lg transition-colors ${
+                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                   darkMode
                     ? 'text-zinc-500 hover:text-zinc-100 hover:bg-zinc-900/50'
                     : 'text-zinc-400 hover:text-zinc-900 hover:bg-zinc-200/50'
@@ -112,7 +112,7 @@ export default function Sidebar({
           <div className="px-4 pb-6 space-y-4">
             <button
               onClick={onNewConversation}
-              className={`w-full px-4 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
+              className={`w-full px-4 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer ${
                 darkMode
                   ? 'bg-zinc-800 text-zinc-100 hover:bg-zinc-700 shadow-xl shadow-black/20'
                   : 'bg-white text-zinc-900 hover:bg-zinc-50 shadow-lg shadow-zinc-200/50 border border-zinc-100'
@@ -209,7 +209,7 @@ export default function Sidebar({
                           e.stopPropagation();
                           startEditing(conv.id, conv.title);
                         }}
-                        className={`p-1.5 rounded-lg transition-colors ${
+                        className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                           currentConversationId === conv.id
                             ? darkMode ? 'hover:bg-zinc-100' : 'hover:bg-zinc-800'
                             : darkMode ? 'hover:bg-zinc-800' : 'hover:bg-zinc-100'
@@ -222,7 +222,7 @@ export default function Sidebar({
                           e.stopPropagation();
                           onDeleteConversation(conv.id);
                         }}
-                        className={`p-1.5 rounded-lg transition-colors ${
+                        className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                           currentConversationId === conv.id
                             ? darkMode ? 'hover:bg-red-50 text-red-600' : 'hover:bg-red-900 text-red-400'
                             : darkMode ? 'hover:bg-red-900/50 text-red-400' : 'hover:bg-red-100 text-red-600'
@@ -241,7 +241,7 @@ export default function Sidebar({
           <div className="px-4 py-3 space-y-1">
             <Link
               to="/docs"
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all cursor-pointer ${
                 darkMode 
                   ? 'text-zinc-500 hover:text-yellow-500 hover:bg-yellow-500/5' 
                   : 'text-zinc-400 hover:text-yellow-600 hover:bg-yellow-50'
@@ -272,7 +272,7 @@ export default function Sidebar({
               <Tooltip content="Sign Out">
                 <button
                   onClick={logout}
-                  className={`p-2 rounded-xl transition-all ${
+                  className={`p-2 rounded-xl transition-all cursor-pointer ${
                     darkMode ? 'text-zinc-500 hover:text-red-400 hover:bg-red-900/20' : 'text-zinc-400 hover:text-red-600 hover:bg-red-50'
                   }`}
                 >
@@ -297,7 +297,7 @@ export default function Sidebar({
           <Tooltip content="Expand" side="right">
             <button
               onClick={toggleSidebar}
-              className={`p-2 rounded-lg transition-colors ${
+              className={`p-2 rounded-lg transition-colors cursor-pointer ${
                 darkMode
                   ? 'hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100'
                   : 'hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900'
@@ -309,7 +309,7 @@ export default function Sidebar({
           <Tooltip content="New Chat" side="right">
             <button
               onClick={onNewConversation}
-              className={`p-2.5 rounded-lg transition-all ${
+              className={`p-2.5 rounded-lg transition-all cursor-pointer ${
                 darkMode
                   ? 'bg-zinc-100 hover:bg-white text-zinc-900 shadow-sm'
                   : 'bg-zinc-900 hover:bg-zinc-800 text-white shadow-md'
@@ -326,7 +326,7 @@ export default function Sidebar({
               </span>
               <button
                 onClick={logout}
-                className={`p-2.5 rounded-lg transition-colors ${
+                className={`p-2.5 rounded-lg transition-colors cursor-pointer ${
                   darkMode ? 'text-zinc-500 hover:text-red-400 hover:bg-red-900/20' : 'text-zinc-400 hover:text-red-600 hover:bg-red-50'
                 }`}
               >

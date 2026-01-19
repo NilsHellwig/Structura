@@ -17,7 +17,7 @@ const backends: { value: LLMBackend; label: string; icon: string; logo: string; 
     value: 'openai', 
     label: 'OpenAI', 
     icon: '🤖', 
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/9/97/OpenAI_logo_2025.svg',
+    logo: 'https://www.svgrepo.com/download/306500/openai.svg',
     description: 'Industry-standard intelligence with powerful cloud models from the creators of ChatGPT.'
   },
   { 
@@ -116,7 +116,7 @@ export default function BackendSelector() {
                 </div>
 
                 <div className="flex flex-col items-start gap-1 text-left pt-1">
-                  <span className="text-[11px] font-black uppercase tracking-widest">{b.label}</span>
+                  <span className="text-[11px] font-black tracking-widest">{b.label}</span>
                   <p className={`text-[10px] leading-relaxed font-medium opacity-60 ${
                       backend === b.value 
                         ? darkMode ? 'text-zinc-600' : 'text-zinc-400' 

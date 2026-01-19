@@ -70,7 +70,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
           </div>
           <button
             onClick={onClose}
-            className={`p-3 rounded-2xl transition-all ${
+            className={`p-3 rounded-2xl transition-all cursor-pointer ${
               darkMode ? 'hover:bg-white/5 text-zinc-500 hover:text-white' : 'hover:bg-zinc-100/80 text-zinc-400 hover:text-black shadow-sm'
             }`}
           >
@@ -200,7 +200,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
                 setMaxTokens(1024);
                 setTopP(1.0);
               }}
-              className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-3 transition-all ${
+              className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-3 transition-all cursor-pointer ${
                 darkMode 
                   ? 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border border-white/5' 
                   : 'bg-white text-zinc-400 hover:bg-zinc-50 hover:text-black border border-zinc-200 shadow-sm'
@@ -211,7 +211,7 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
             </button>
             <button
               onClick={handleSave}
-              className={`flex-[2] h-14 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${
+              className={`flex-[2] h-14 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] cursor-pointer ${
                 darkMode 
                   ? 'bg-white text-black hover:bg-zinc-200 shadow-xl shadow-white/5' 
                   : 'bg-zinc-950 text-white hover:bg-zinc-800 shadow-xl shadow-black/10'

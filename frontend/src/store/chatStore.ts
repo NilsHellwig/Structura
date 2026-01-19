@@ -15,6 +15,8 @@ interface ChatState {
   messages: Message[];
   isLoading: boolean;
   isStreaming: boolean;
+  isConnected: boolean;
+  availableModels: string[];
   abortController: AbortController | null;
   capabilities: Record<string, string[]>;
   
@@ -22,6 +24,7 @@ interface ChatState {
   setCurrentConversation: (id: number | null) => void;
   setBackend: (backend: LLMBackend) => void;
   setModel: (model: string) => void;
+  setAvailableModels: (models: string[]) => void;
   setOutputFormat: (format: OutputFormat) => void;
   setFormatSpec: (spec: string | null) => void;
   setLLMParameters: (params: Record<string, any>) => void;
@@ -102,6 +105,8 @@ export const useChatStore = create<ChatState>((set, get) => {
     messages: [],
     isLoading: false,
     isStreaming: false,
+    isConnected: false,
+    availableModels: [],
     abortController: null,
     capabilities: {},
 
@@ -131,6 +136,7 @@ export const useChatStore = create<ChatState>((set, get) => {
       set({ 
         backend, 
         model: newModel, 
+        availableModels: [], // Reset models on backend change
         llmParameters: initialParams,
         outputFormat: newFormat,
         formatSpec: state.formatSpecs[newFormat] || null
@@ -155,6 +161,16 @@ export const useChatStore = create<ChatState>((set, get) => {
       saveStoredModel(state.backend, model);
       return { model };
     }),
+    setAvailableModels: (availableModels) => {
+      const isConnected = availableModels.length > 0;
+      set((state) => ({ 
+        availableModels,
+        isConnected,
+        // Reset output format if disconnected
+        outputFormat: !isConnected ? 'default' : state.outputFormat,
+        formatSpec: !isConnected ? null : state.formatSpec
+      }));
+    },
     setOutputFormat: (format) => set((state) => {
       const newSpec = state.formatSpecs[format] || null;
       return { outputFormat: format, formatSpec: newSpec };

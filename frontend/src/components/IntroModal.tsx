@@ -64,7 +64,7 @@ export default function IntroModal() {
                   </div>
                   <button
                     onClick={handleClose}
-                    className={`p-3 rounded-2xl transition-all ${
+                    className={`p-3 rounded-2xl transition-all cursor-pointer ${
                       darkMode 
                         ? 'hover:bg-white/5 text-zinc-500 hover:text-white' 
                         : 'hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900'
@@ -153,7 +153,7 @@ export default function IntroModal() {
               <div className="p-10">
                 <button
                   onClick={handleClose}
-                  className={`group w-full h-16 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${
+                  className={`group w-full h-16 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] cursor-pointer ${
                     darkMode 
                       ? 'bg-white text-black hover:bg-zinc-200 shadow-xl shadow-white/5' 
                       : 'bg-zinc-950 text-white hover:bg-zinc-800 shadow-xl shadow-black/10'

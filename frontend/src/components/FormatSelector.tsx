@@ -16,26 +16,31 @@ const formats: { value: OutputFormat; label: string }[] = [
 
 export default function FormatSelector() {
   const darkMode = useUIStore((state) => state.darkMode);
-  const { backend, outputFormat, setOutputFormat, capabilities } = useChatStore();
+  const { backend, outputFormat, setOutputFormat, capabilities, isConnected } = useChatStore();
   const [open, setOpen] = useState(false);
 
   const availableFormats = formats.filter(f => {
     const backendCapabilities = capabilities[backend] || [];
-    // If capabilities are not yet loaded, show only default
-    if (Object.keys(capabilities).length === 0) return f.value === OutputFormat.DEFAULT;
+    // If capabilities are not yet loaded or not connected, show only default
+    if (!isConnected || Object.keys(capabilities).length === 0) return f.value === OutputFormat.DEFAULT;
     return backendCapabilities.includes(f.value);
   });
 
   const selectedFormat = availableFormats.find((f) => f.value === outputFormat) || availableFormats[0];
 
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
+    <Popover.Root open={open && isConnected} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
         <button
+          disabled={!isConnected}
           className={`px-4 py-1.5 h-10 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl flex items-center gap-2 transition-all ${
-            darkMode
-              ? 'text-zinc-500 hover:text-white hover:bg-white/5'
-              : 'text-zinc-400 hover:text-black hover:bg-zinc-100'
+            !isConnected 
+              ? 'opacity-20 cursor-not-allowed' 
+              : `cursor-pointer ${
+                  darkMode
+                    ? 'text-zinc-500 hover:text-white hover:bg-white/5'
+                    : 'text-zinc-400 hover:text-black hover:bg-zinc-100'
+                }`
           }`}
         >
           <span className="truncate">{selectedFormat?.label || 'FORMAT'}</span>
@@ -65,7 +70,7 @@ export default function FormatSelector() {
                 setOutputFormat(f.value);
                 setOpen(false);
               }}
-              className={`w-full px-4 py-3 text-[10px] rounded-2xl flex items-center justify-between gap-2 transition-all font-black uppercase tracking-wider ${
+              className={`w-full px-4 py-3 text-[10px] rounded-2xl flex items-center justify-between gap-2 transition-all font-black uppercase tracking-wider cursor-pointer ${
                 outputFormat === f.value
                   ? darkMode
                     ? 'bg-white text-black'

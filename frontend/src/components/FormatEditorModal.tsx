@@ -45,7 +45,7 @@ export default function FormatEditorModal() {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <button
-          className={`p-2 w-10 h-10 flex items-center justify-center rounded-2xl transition-all ${
+          className={`p-2 w-10 h-10 flex items-center justify-center rounded-2xl transition-all cursor-pointer ${
             darkMode
               ? 'bg-white/5 border border-white/5 text-zinc-400 hover:text-yellow-500 hover:bg-white/10'
               : 'bg-zinc-100 border border-zinc-200/50 text-zinc-500 hover:text-yellow-600 hover:bg-zinc-200'
@@ -102,7 +102,7 @@ export default function FormatEditorModal() {
                   </div>
                   <Dialog.Close asChild>
                     <button
-                      className={`p-3 rounded-2xl transition-all ${
+                      className={`p-3 rounded-2xl transition-all cursor-pointer ${
                         darkMode ? 'hover:bg-white/5 text-zinc-500 hover:text-white' : 'hover:bg-zinc-100 text-zinc-400 hover:text-black'
                       }`}
                     >

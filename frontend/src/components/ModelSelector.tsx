@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import * as Popover from '@radix-ui/react-popover';
 import { CaretDown, Check, Sparkle } from 'phosphor-react';
+import toast from 'react-hot-toast';
 import { useUIStore } from '../store/uiStore';
 import { useChatStore } from '../store/chatStore';
 import api from '../lib/api';
 
 export default function ModelSelector() {
   const darkMode = useUIStore((state) => state.darkMode);
-  const { backend, model, setModel, llmParameters } = useChatStore();
+  const { backend, model, setModel, llmParameters, availableModels: models, setAvailableModels } = useChatStore();
   const [open, setOpen] = useState(false);
-  const [models, setModels] = useState<string[]>([]);
 
   useEffect(() => {
     let isMounted = true;
     const fetchModels = async () => {
       // Clear models immediately when backend or key parameters change to avoid stale data
-      setModels([]);
+      setAvailableModels([]);
 
       try {
         const response = await api.post('/llm/models', {
@@ -26,7 +26,7 @@ export default function ModelSelector() {
         if (!isMounted) return;
 
         const fetchedModels = response.data.models || [];
-        setModels(fetchedModels);
+        setAvailableModels(fetchedModels);
 
         if (model && fetchedModels.length > 0 && !fetchedModels.includes(model)) {
           setModel('');
@@ -34,7 +34,10 @@ export default function ModelSelector() {
       } catch (error) {
         if (!isMounted) return;
         console.error('Failed to fetch models:', error);
-        setModels([]);
+        setAvailableModels([]);
+        toast.error('Failed to load model list. Check backend connection.', {
+          id: 'model-fetch-error',
+        });
       }
     };
 
@@ -42,14 +45,14 @@ export default function ModelSelector() {
     return () => {
       isMounted = false;
     };
-  }, [backend, llmParameters.base_url, llmParameters.api_key, setModel]);
+  }, [backend, llmParameters.base_url, llmParameters.api_key, setModel, setAvailableModels]);
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
         <button
           disabled={!models.length}
-          className={`px-4 py-1.5 h-10 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl flex items-center gap-2 transition-all disabled:opacity-30 ${
+          className={`px-4 py-1.5 h-10 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl flex items-center gap-2 transition-all disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed ${
             darkMode
               ? 'text-zinc-500 hover:text-white hover:bg-white/5'
               : 'text-zinc-400 hover:text-black hover:bg-zinc-100'
@@ -84,7 +87,7 @@ export default function ModelSelector() {
                   setModel(m);
                   setOpen(false);
                 }}
-                className={`w-full px-4 py-3 text-[10px] rounded-2xl flex items-center justify-between gap-2 transition-all font-black uppercase tracking-wider ${
+                className={`w-full px-4 py-3 text-[10px] rounded-2xl flex items-center justify-between gap-2 transition-all font-black uppercase tracking-wider cursor-pointer ${
                   model === m
                     ? darkMode
                       ? 'bg-white text-black'

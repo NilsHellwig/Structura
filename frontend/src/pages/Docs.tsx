@@ -113,7 +113,7 @@ export default function Docs() {
         <div className="p-8 border-b border-transparent">
           <button 
             onClick={() => navigate('/')}
-            className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] mb-8 transition-colors ${
+            className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] mb-8 cursor-pointer transition-colors ${
               darkMode ? 'text-zinc-500 hover:text-white' : 'text-zinc-400 hover:text-zinc-900'
             }`}
           >
@@ -156,7 +156,7 @@ export default function Docs() {
             <div key={group.id} className="space-y-1">
               <button
                 onClick={() => toggleGroup(group.id)}
-                className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
                   darkMode ? 'hover:bg-white/5 text-zinc-500' : 'hover:bg-zinc-200/50 text-zinc-400'
                 }`}
               >

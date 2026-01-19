@@ -36,40 +36,60 @@ export default function Login() {
     <div className={`min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden ${
       darkMode ? 'bg-zinc-950 text-zinc-100' : 'bg-white text-zinc-900'
     }`}>
-      {/* Decorative Blur Elements */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-yellow-500/10 rounded-full blur-[120px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-zinc-500/10 rounded-full blur-[120px]" />
+      {/* Decorative Blur Elements - Refined for Dark Mode */}
+      <div className={`absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[140px] opacity-20 transition-all duration-1000 ${
+        darkMode ? 'bg-amber-900/40' : 'bg-yellow-500/20'
+      }`} />
+      <div className={`absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full blur-[140px] opacity-20 transition-all duration-1000 ${
+        darkMode ? 'bg-zinc-800/40' : 'bg-zinc-200/40'
+      }`} />
 
       <div className="w-full max-w-md relative z-10">
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-black tracking-tighter mb-3">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12 text-center"
+        >
+          <h1 className="text-4xl font-black tracking-tighter mb-3 leading-none">
             Structura
           </h1>
-          <p className={`text-[11px] font-black uppercase tracking-[0.2em] opacity-50 ${darkMode ? 'text-zinc-400' : 'text-zinc-500'}`}>
-            Intelligent Structured Core
+          <p className={`text-[10px] font-black uppercase tracking-[0.3em] opacity-40 ${darkMode ? 'text-zinc-400' : 'text-zinc-500'}`}>
+            Intelligent Structured Prompting
           </p>
-        </div>
+        </motion.div>
 
-        <div className={`p-8 rounded-3xl border shadow-2xl backdrop-blur-xl ${
-          darkMode ? 'bg-zinc-950/50 border-zinc-800' : 'bg-white/90 border-zinc-100 shadow-zinc-200/50'
-        }`}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1 }}
+          className={`p-10 rounded-[2.5rem] border shadow-2xl backdrop-blur-2xl relative overflow-hidden ${
+            darkMode 
+              ? 'bg-zinc-900/40 border-white/5 shadow-black/50' 
+              : 'bg-white border-zinc-100 shadow-zinc-200/70'
+          }`}
         >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className={`block text-[10px] font-black uppercase tracking-widest pl-1 ${
+          {/* Inner Glow Effect */}
+          {darkMode && <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/5 to-transparent pointer-events-none" />}
+          
+          <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+            <div className="space-y-3">
+              <label className={`block text-[10px] font-black uppercase tracking-[0.2em] pl-1 ${
                 darkMode ? 'text-zinc-500' : 'text-zinc-400'
               }`}>
-                Identity
+                Username
               </label>
               <div className="relative group">
+                <div className={`absolute left-5 top-1/2 -translate-y-1/2 transition-colors ${darkMode ? 'text-zinc-600 group-focus-within:text-yellow-500' : 'text-zinc-400 group-focus-within:text-yellow-500'}`}>
+                  <User size={18} weight="bold" />
+                </div>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className={`w-full px-5 py-4 text-sm font-bold rounded-2xl border outline-none transition-all ${
+                  className={`w-full pl-14 pr-6 py-4.5 h-14 text-sm font-bold rounded-2xl border outline-none transition-all ${
                     darkMode
-                      ? 'bg-zinc-900/50 border-zinc-800 text-white placeholder-zinc-700 focus:border-yellow-500/50 focus:bg-zinc-900'
-                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-yellow-500/30 focus:bg-white'
+                      ? 'bg-zinc-950/50 border-white/5 text-white placeholder-zinc-700 focus:border-yellow-500/30 focus:bg-zinc-950'
+                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-yellow-500/20 focus:bg-white'
                   }`}
                   placeholder="Username"
                   required
@@ -77,21 +97,24 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className={`block text-[10px] font-black uppercase tracking-widest pl-1 ${
+            <div className="space-y-3">
+              <label className={`block text-[10px] font-black uppercase tracking-[0.2em] pl-1 ${
                 darkMode ? 'text-zinc-500' : 'text-zinc-400'
               }`}>
                 Password
               </label>
               <div className="relative group">
+                <div className={`absolute left-5 top-1/2 -translate-y-1/2 transition-colors ${darkMode ? 'text-zinc-600 group-focus-within:text-yellow-500' : 'text-zinc-400 group-focus-within:text-yellow-500'}`}>
+                  <LockKey size={18} weight="bold" />
+                </div>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full px-5 py-4 text-sm font-bold rounded-2xl border outline-none transition-all ${
+                  className={`w-full pl-14 pr-6 py-4.5 h-14 text-sm font-bold rounded-2xl border outline-none transition-all ${
                     darkMode
-                      ? 'bg-zinc-900/50 border-zinc-800 text-white placeholder-zinc-700 focus:border-yellow-500/50 focus:bg-zinc-900'
-                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-yellow-500/30 focus:bg-white'
+                      ? 'bg-zinc-950/50 border-white/5 text-white placeholder-zinc-700 focus:border-yellow-500/30 focus:bg-zinc-950'
+                      : 'bg-zinc-50/50 border-zinc-100 text-zinc-900 placeholder-zinc-300 focus:border-yellow-500/20 focus:bg-white'
                   }`}
                   placeholder="••••••••"
                   required
@@ -102,29 +125,38 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-4 px-6 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${
+              className={`w-full h-16 rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all active:scale-[0.98] cursor-pointer ${
                 loading
                   ? 'opacity-50 cursor-not-allowed'
                   : darkMode
-                    ? 'bg-white text-zinc-900 hover:bg-zinc-200 shadow-xl shadow-white/5'
-                    : 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-xl shadow-zinc-900/10'
+                    ? 'bg-white text-zinc-950 hover:bg-zinc-200 shadow-xl shadow-white/5'
+                    : 'bg-zinc-950 text-white hover:bg-zinc-800 shadow-xl shadow-black/20'
               }`}
             >
-              {loading ? 'Authenticating...' : 'Sign In'}
+              {loading ? 'Validating...' : 'Login'}
               {!loading && <ArrowRight size={18} weight="bold" />}
             </button>
           </form>
-        </div>
+        </motion.div>
 
-        <p className={`mt-8 text-center text-[10px] font-black uppercase tracking-widest ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className={`mt-10 text-center text-[10px] font-black uppercase tracking-[0.2em] ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}
+        >
           No account?{' '}
           <Link
             to="/register"
-            className={`${darkMode ? 'text-zinc-100 hover:text-yellow-500' : 'text-zinc-900 hover:text-yellow-600'} transition-colors ml-2`}
+            className={`transition-all pb-0.5 border-b border-transparent ${
+              darkMode 
+                ? 'text-zinc-100 hover:text-yellow-500 hover:border-yellow-500/50' 
+                : 'text-zinc-900 hover:text-yellow-600 hover:border-yellow-600/50'
+            } ml-2`}
           >
-            Create Account
+            Register
           </Link>
-        </p>
+        </motion.p>
       </div>
     </div>
   );

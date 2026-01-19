@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Robot, Copy, Check, PencilSimple, Trash, CheckCircle, XCircle, Sparkle, PaperPlaneRight, FileCsv, Table, ArrowsClockwise, ArrowDown } from 'phosphor-react';
+import { Copy, Check, PencilSimple, Trash, CheckCircle, XCircle, Sparkle, PaperPlaneRight, FileCsv, Table, ArrowsClockwise, ArrowDown } from 'phosphor-react';
 import { useUIStore } from '../store/uiStore';
 import { useChatStore } from '../store/chatStore';
 import { useAuthStore } from '../store/authStore';
 import MarkdownRenderer from './MarkdownRenderer';
 import toast from 'react-hot-toast';
+
+const backendLogos: Record<string, string> = {
+  ollama: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/ollama-icon.svg',
+  openai: 'https://www.svgrepo.com/download/306500/openai.svg',
+  vllm: 'https://raw.githubusercontent.com/vllm-project/media-kit/main/vLLM-Full-Logo.svg',
+};
 
 export default function ChatArea() {
   const darkMode = useUIStore((state) => state.darkMode);
@@ -201,10 +207,18 @@ export default function ChatArea() {
                         {user?.username?.substring(0, 1) || 'U'}
                       </div>
                     ) : (
-                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 ${
-                        darkMode ? 'bg-zinc-900 text-yellow-500 border border-zinc-800' : 'bg-white text-yellow-600 shadow-sm border border-zinc-100'
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 overflow-hidden ${
+                        darkMode ? 'bg-zinc-900 border border-zinc-800' : 'bg-white shadow-sm border border-zinc-100'
                       }`}>
-                        <Robot size={22} weight="fill" />
+                        {message.backend && backendLogos[message.backend] ? (
+                          <img 
+                            src={backendLogos[message.backend]} 
+                            alt={message.backend} 
+                            className={`w-5 h-5 object-contain ${darkMode ? 'invert opacity-80' : 'opacity-90'}`} 
+                          />
+                        ) : (
+                          <Sparkle size={20} weight="fill" className="text-yellow-500" />
+                        )}
                       </div>
                     )}
                   </div>
@@ -214,7 +228,7 @@ export default function ChatArea() {
                     <div className="flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
                       <button
                         onClick={() => handleCopy(message.content, index)}
-                        className={`p-2 rounded-xl transition-all ${
+                        className={`p-2 rounded-xl transition-all cursor-pointer ${
                           darkMode ? 'text-zinc-500 hover:text-white hover:bg-zinc-800' : 'text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100'
                         }`}
                         title="Copy"
@@ -224,7 +238,7 @@ export default function ChatArea() {
                       {message.role === 'assistant' && index === messages.length - 1 && !isLoading && (
                         <button
                           onClick={() => handleRegenerate(index)}
-                          className={`p-2 rounded-xl transition-all ${
+                          className={`p-2 rounded-xl transition-all cursor-pointer ${
                             darkMode ? 'text-zinc-500 hover:text-yellow-500 hover:bg-zinc-800' : 'text-zinc-400 hover:text-yellow-600 hover:bg-zinc-100'
                           }`}
                           title="Regenerate"
@@ -235,7 +249,7 @@ export default function ChatArea() {
                       {message.role === 'user' && (
                         <button
                           onClick={() => handleStartEdit(message.id!, message.content)}
-                          className={`p-2 rounded-xl transition-all ${
+                          className={`p-2 rounded-xl transition-all cursor-pointer ${
                             darkMode ? 'text-zinc-500 hover:text-white hover:bg-zinc-800' : 'text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100'
                           }`}
                           title="Edit"
@@ -245,8 +259,8 @@ export default function ChatArea() {
                       )}
                       <button
                         onClick={() => handleDelete(message.id!)}
-                        className={`p-2 rounded-xl transition-all ${
-                          darkMode ? 'text-zinc-500 hover:text-red-400 hover:bg-zinc-800' : 'text-zinc-400 hover:text-red-500 hover:bg-zinc-100'
+                        className={`p-2 rounded-xl transition-all cursor-pointer ${
+                          darkMode ? 'text-zinc-500 hover:text-red-400 hover:bg-red-800' : 'text-zinc-400 hover:text-red-500 hover:bg-red-100'
                         }`}
                         title="Delete"
                       >

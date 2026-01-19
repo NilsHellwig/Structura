@@ -202,7 +202,7 @@ export default function RegexEditor() {
         <div className="flex gap-3">
           <button
             onClick={resetEditor}
-            className={`h-11 px-5 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 transition-all ${
+            className={`h-11 px-5 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 transition-all cursor-pointer ${
               darkMode 
                 ? 'bg-zinc-800 text-zinc-400 border border-zinc-800 hover:text-white hover:border-zinc-700 hover:bg-zinc-700' 
                 : 'bg-zinc-100 text-zinc-500 border border-zinc-200 hover:text-zinc-900 hover:border-zinc-300 hover:bg-zinc-200'
@@ -228,6 +228,8 @@ export default function RegexEditor() {
             onClick={savePattern}
             disabled={!saveName.trim() || !isValid}
             className={`h-11 px-6 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 transition-all active:scale-[0.98] disabled:opacity-30 disabled:grayscale ${
+              !saveName.trim() || !isValid ? '' : 'cursor-pointer'
+            } ${
               darkMode 
                 ? 'bg-white text-zinc-950 hover:bg-zinc-200 shadow-xl' 
                 : 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-xl shadow-zinc-900/10'
@@ -271,7 +273,7 @@ export default function RegexEditor() {
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={(e) => deletePattern(e, p.id)}
-                    className={`p-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all ${
+                    className={`p-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all cursor-pointer ${
                       darkMode ? 'hover:bg-red-900/40 text-red-400' : 'hover:bg-red-50 text-red-600 shadow-sm border border-red-50'
                     }`}
                   >
