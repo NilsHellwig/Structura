@@ -70,8 +70,8 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
               <code
                 className={`px-1.5 py-0.5 rounded font-mono text-xs ${
                   darkMode
-                    ? 'bg-[#0d1117] text-pink-400'
-                    : 'bg-[#0d1117] text-pink-600'
+                    ? 'bg-gray-600 text-white'
+                    : 'bg-[#0d1117] text-white'
                 }`}
                 {...props}
               >

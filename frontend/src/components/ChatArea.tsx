@@ -321,7 +321,7 @@ export default function ChatArea() {
                           </div>
                         </div>
                       ) : (
-                        <p className="text-sm leading-relaxed font-bold whitespace-pre-wrap break-words">
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
                           {message.content.split('%-%-%')[0].trim()}
                         </p>
                       )
