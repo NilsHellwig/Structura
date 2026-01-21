@@ -36,12 +36,15 @@ export default function Login() {
     <div className={`min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden ${
       darkMode ? 'bg-zinc-950 text-zinc-100' : 'bg-white text-zinc-900'
     }`}>
-      {/* Decorative Blur Elements - Refined for Dark Mode */}
-      <div className={`absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[140px] opacity-20 transition-all duration-1000 ${
-        darkMode ? 'bg-amber-900/40' : 'bg-yellow-500/20'
+      {/* Decorative Blur Elements - More colorful and dynamic */}
+      <div className={`absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full blur-[160px] opacity-30 transition-all duration-1000 ${
+        darkMode ? 'bg-amber-600/30' : 'bg-yellow-400/30'
       }`} />
       <div className={`absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full blur-[140px] opacity-20 transition-all duration-1000 ${
-        darkMode ? 'bg-zinc-800/40' : 'bg-zinc-200/40'
+        darkMode ? 'bg-purple-600/20' : 'bg-purple-400/20'
+      }`} />
+      <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%] rounded-full blur-[120px] opacity-10 transition-all duration-1000 ${
+        darkMode ? 'bg-blue-500/20' : 'bg-blue-400/20'
       }`} />
 
       <div className="w-full max-w-md relative z-10">
@@ -62,14 +65,15 @@ export default function Login() {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1 }}
-          className={`p-10 rounded-[2.5rem] border shadow-2xl backdrop-blur-2xl relative overflow-hidden ${
+          className={`p-10 rounded-[2.5rem] border shadow-2xl backdrop-blur-3xl relative overflow-hidden ${
             darkMode 
-              ? 'bg-zinc-900/40 border-white/5 shadow-black/50' 
-              : 'bg-white border-zinc-100 shadow-zinc-200/70'
+              ? 'bg-zinc-900/60 border-white/10 shadow-black/50' 
+              : 'bg-white/80 border-zinc-100 shadow-zinc-200/70'
           }`}
         >
-          {/* Inner Glow Effect */}
-          {darkMode && <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/5 to-transparent pointer-events-none" />}
+          {/* Inner Glow Effects */}
+          <div className={`absolute -top-24 -right-24 w-48 h-48 rounded-full blur-3xl opacity-20 pointer-events-none ${darkMode ? 'bg-amber-500' : 'bg-amber-400'}`} />
+          <div className={`absolute -bottom-24 -left-24 w-48 h-48 rounded-full blur-3xl opacity-20 pointer-events-none ${darkMode ? 'bg-purple-500' : 'bg-purple-400'}`} />
           
           <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
             <div className="space-y-3">
