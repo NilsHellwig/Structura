@@ -98,6 +98,15 @@ Detailed documentation is available in the [Documentation section](frontend/src/
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
 
+## 🆘 Support & Questions
+
+Have a question or found a bug? 
+- **GitHub Issues**: For bug reports and feature requests.
+- **GitHub Discussions**: For general questions, ideas, and showcasing your projects.
+
+### 🌟 Support the project
+If you find Structura useful, please **give it a star on GitHub!** It helps the project grow and reach more developers.
+
 ## 📄 License
 
 Apache-2.0 License - see the [LICENSE](LICENSE) file for details.
