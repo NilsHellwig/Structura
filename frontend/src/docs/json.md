@@ -2,6 +2,8 @@
 
 The JSON format is the primary method for extracting programmatic data from LLMs. Structura provides a dual-interface for managing these schemas: a **Visual GUI** and a **Raw Schema Editor**.
 
+![JSON Editor Builder](../../../screenshots/json-popup.png)
+
 ## The GUI Editor
 
 Structura includes a proprietary tree-based schema builder. This allows users to:

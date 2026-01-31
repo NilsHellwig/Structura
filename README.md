@@ -1,10 +1,18 @@
-# Structura
+<p align="center">
+  <img src="screenshots/banner.png" width="100%" alt="Structura Banner" />
+</p>
 
 <p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg" width="60" height="60" alt="Structura Logo" />
+  <img src="https://img.shields.io/badge/status-active-success.svg" alt="Status" />
+  <img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="License" />
+  <img src="https://img.shields.io/badge/version-v1.1.0-orange.svg" alt="Version" />
 </p>
 
 **Structura** is a professional web interface designed for **guaranteed structured outputs** from Large Language Models. It enables developers to bridge the gap between stochastic LLM responses and deterministic application logic through rigorous schema enforcement, regex constraints, and template-based generation.
+
+<p align="center">
+  <img src="screenshots/start-dark-mode.png" width="100%" alt="Structura UI Overview" />
+</p>
 
 ## 🚀 Key Features
 
@@ -12,10 +20,27 @@
   - **JSON Schema**: Native JSON mode with GUI-based schema construction.
   - **Regex Engine**: Force models to strictly follow regular expression patterns.
   - **Templates**: "Fill-in-the-gap" generation using `[GEN]` placeholders.
-- **Multi-Backend support**: Connect to **Ollama**, **vLLM**, or **OpenAI** with a single toggle.
-- **Artifact Management**: Save, rename, and reuse schemas and patterns across different conversations.
-- **Real-time Streaming**: Low-latency token streaming for all backends.
-- **Dark Mode First**: A beautifully crafted, high-performance UI tailored for developers.
+- **Visual Artifact Libraries**: Manage your patterns, schemas, and templates in one place.
+- **Multi-Backend Support**: Seamlessly switch between **Ollama**, **vLLM**, and **OpenAI**.
+- **Thematic Consistency**: Full support for Dark & Light modes.
+
+## 📸 Visual Editing
+
+| JSON Schema Builder | Regex Pattern Editor |
+|---|---|
+| ![JSON Editor](screenshots/json-popup.png) | ![Regex Editor](screenshots/regex-popup.png) |
+
+| Template Editor | Resulting Output |
+|---|---|
+| ![Template Editor](screenshots/template.png) | ![Output](screenshots/structura%20template%20response.png) |
+
+## ✨ Theme Support
+
+Whether you prefer the tactical feel of **Dark Mode** or the clean aesthetics of **Light Mode**, Structura adapts to your workflow.
+
+| Dark Mode | Light Mode |
+|---|---|
+| ![Dark](screenshots/start-dark-mode.png) | ![Light](screenshots/structura-light-mode.png) |
 
 ## 🛠️ Getting Started
 

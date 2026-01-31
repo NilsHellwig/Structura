@@ -2,6 +2,8 @@
 
 Regular Expressions (Regex) provide the most granular control over LLM outputs. This mode is particularly useful for generating non-conversational tokens like identifiers, codes, or strictly formatted metadata.
 
+![Regex Pattern Editor](../../../screenshots/regex-popup.png)
+
 ## Backend Support
 
 - **vLLM**: Robust support via the `structured_outputs` API.

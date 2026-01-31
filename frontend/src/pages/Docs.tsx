@@ -76,7 +76,8 @@ export default function Docs() {
   const [expandedGroups, setExpandedGroups] = useState<string[]>(['getting-started']);
 
   // Current page ID from URL or default
-  const currentPageId = location.pathname.split('/').pop() || 'intro';
+  const lastSegment = location.pathname.split('/').pop();
+  const currentPageId = !lastSegment || lastSegment === 'docs' ? 'intro' : lastSegment;
 
   const toggleGroup = (id: string) => {
     setExpandedGroups(prev => 
@@ -94,7 +95,21 @@ export default function Docs() {
     })).filter(group => group.children.length > 0);
   }, [searchQuery]);
 
-  const content = getDocContent(currentPageId) || `# ${currentPageId.charAt(0).toUpperCase() + currentPageId.slice(1)}\n\nComing soon... This part of the documentation is currently being drafted.`;
+  const content = getDocContent(currentPageId) || `
+# ${currentPageId.charAt(0).toUpperCase() + currentPageId.slice(1)}
+
+Welcome to the Structura documentation. 
+
+![Documentation Architecture](../../screenshots/docs.png)
+
+This page is currently under construction or the content for **${currentPageId}** could not be found. 
+Please select a topic from the sidebar to learn more about our features, backends, and output formats.
+
+### Looking for the basics?
+- [Introduction](/docs/intro)
+- [Installation Guide](/docs/install)
+- [JSON Schema Tutorial](/docs/json)
+`;
 
   return (
     <div className={`flex h-screen overflow-hidden ${darkMode ? 'bg-zinc-950 text-zinc-100' : 'bg-white text-zinc-900'}`}>
