@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { UserPlus, User, LockKey, ArrowRight } from 'phosphor-react';
+import { User, LockKey, ArrowRight } from 'phosphor-react';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import api from '../lib/api';

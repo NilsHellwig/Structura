@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Plus, Trash, PencilSimple, CaretLeft, Moon, SunDim, SignOut, Sparkle, Question, MagnifyingGlass, Book } from 'phosphor-react';
+import { Plus, Trash, PencilSimple, CaretLeft, Moon, SunDim, SignOut, Question, MagnifyingGlass, Book } from 'phosphor-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useUIStore } from '../store/uiStore';
@@ -155,11 +155,11 @@ export default function Sidebar({
               <span>Recent Sessions</span>
               {searchQuery && (
                 <span className="text-[8px] bg-yellow-500/10 text-yellow-600 px-2 py-0.5 rounded-full font-bold tracking-tight">
-                  {filteredConversations.length} MATCHES
+                  {(filteredConversations || []).length} MATCHES
                 </span>
               )}
             </div>
-            {filteredConversations.map((conv) => (
+            {Array.isArray(filteredConversations) && filteredConversations.map((conv) => (
               <div
                 key={conv.id}
                 className={`group relative rounded-xl transition-all duration-200 ${

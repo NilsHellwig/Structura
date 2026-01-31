@@ -9,20 +9,13 @@ const STORAGE_KEY_PROMPT_HISTORY = 'structura_prompt_history';
 export default function PromptEditor() {
   const darkMode = useUIStore((state) => state.darkMode);
   const {
-    currentConversationId,
     prompt,
     setPrompt,
     outputFormat,
     isLoading,
-    setIsLoading,
     isConnected,
-    messages,
-    setMessages,
     backend,
     model,
-    formatSpec,
-    llmParameters,
-    createNewConversation,
     sendMessage,
     stopGeneration,
   } = useChatStore();
@@ -130,7 +123,8 @@ export default function PromptEditor() {
             </div>
           </div>
         )}
-        <div className="p-4 flex items-end gap-3">
+
+        <div className="p-4 flex items-end gap-2">
           <textarea
             ref={textareaRef}
             value={prompt || ''}
@@ -138,7 +132,7 @@ export default function PromptEditor() {
             onKeyDown={handleKeyDown}
             placeholder={!isConnected ? "No connection to LLM..." : "Message Structura..."}
             disabled={!isConnected}
-            className={`flex-1 resize-none outline-none bg-transparent text-sm font-bold leading-relaxed max-h-[240px] py-3 px-2 ${
+            className={`flex-1 resize-none outline-none bg-transparent text-sm leading-relaxed max-h-[240px] py-3 px-2 ${
               !isConnected ? 'opacity-30 cursor-not-allowed' : ''
             } ${
               darkMode ? 'text-zinc-100 placeholder-zinc-500' : 'text-zinc-900 placeholder-zinc-400'

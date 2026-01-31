@@ -9,7 +9,6 @@ import ChatArea from '../components/ChatArea';
 import PromptEditor from '../components/PromptEditor';
 import IntroModal from '../components/IntroModal';
 import api from '../lib/api';
-import type { Conversation } from '../types';
 
 export default function Chat() {
   const navigate = useNavigate();

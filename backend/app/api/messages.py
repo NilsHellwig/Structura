@@ -14,7 +14,7 @@ from app.services.llm import generate_llm_response, generate_llm_response_stream
 router = APIRouter(prefix="/conversations/{conversation_id}/messages", tags=["messages"])
 
 
-@router.get("/", response_model=List[MessageResponse])
+@router.get("", response_model=List[MessageResponse])
 def get_messages(
     conversation_id: int,
     current_user: User = Depends(get_current_user),
@@ -72,7 +72,7 @@ async def create_message(
     
     # Generate LLM response
     try:
-        llm_response = await generate_llm_response(
+        response_data = await generate_llm_response(
             backend=message.backend,
             model=message.model,
             messages=_get_conversation_history(conversation_id, db),
@@ -85,7 +85,7 @@ async def create_message(
         assistant_message = Message(
             conversation_id=conversation_id,
             role=MessageRole.assistant,
-            content=llm_response,
+            content=response_data.get("content", ""),
             backend=message.backend,
             model=message.model,
             output_format=message.output_format,
@@ -96,9 +96,9 @@ async def create_message(
         
         # Update conversation timestamp and auto-title
         conversation.updated_at = datetime.utcnow()
-        if len(conversation.messages) == 0:
+        if len(conversation.messages) <= 1:
             conversation.title = message.content[:50] + ("..." if len(message.content) > 50 else "")
-        
+            
         db.commit()
         db.refresh(assistant_message)
         
@@ -142,8 +142,11 @@ async def create_message_stream(
     db.refresh(user_message)
     
     async def generate():
-        full_response = ""
+        full_content = ""
         try:
+            # Send initial IDs
+            yield f"data: {json.dumps({'user_message_id': user_message.id})}\n\n"
+
             async for chunk in generate_llm_response_stream(
                 backend=message.backend,
                 model=message.model,
@@ -152,14 +155,16 @@ async def create_message_stream(
                 format_spec=message.format_spec,
                 parameters=message.llm_parameters or {}
             ):
-                full_response += chunk
-                yield f"data: {json.dumps({'chunk': chunk})}\n\n"
+                if "content" in chunk:
+                    full_content += chunk["content"]
+                
+                yield f"data: {json.dumps(chunk)}\n\n"
             
             # Save complete assistant message
             assistant_message = Message(
                 conversation_id=conversation_id,
                 role=MessageRole.assistant,
-                content=full_response,
+                content=full_content,
                 backend=message.backend,
                 model=message.model,
                 output_format=message.output_format,
@@ -170,15 +175,17 @@ async def create_message_stream(
             
             # Update conversation
             conversation.updated_at = datetime.utcnow()
-            if len(conversation.messages) == 0:
+            if len(conversation.messages) <= 2: # User + initial
                 conversation.title = message.content[:50] + ("..." if len(message.content) > 50 else "")
             
             db.commit()
             db.refresh(assistant_message)
             
-            yield f"data: {json.dumps({'done': True, 'message_id': assistant_message.id})}\n\n"
+            yield f"data: {json.dumps({'done': True, 'assistant_message_id': assistant_message.id})}\n\n"
             
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
     
     return StreamingResponse(generate(), media_type="text/event-stream")
@@ -250,7 +257,7 @@ def _get_conversation_history(conversation_id: int, db: Session) -> List[dict]:
         Message.conversation_id == conversation_id
     ).order_by(Message.created_at).all()
     
-    return [
-        {"role": msg.role.value, "content": msg.content}
-        for msg in messages
-    ]
+    history = []
+    for msg in messages:
+        history.append({"role": msg.role.value, "content": msg.content})
+    return history

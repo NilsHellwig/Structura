@@ -6,11 +6,6 @@ import {
   BookOpen, 
   ArrowLeft, 
   MagnifyingGlass,
-  FileText,
-  Folder,
-  ChartBar,
-  Code,
-  ShieldCheck,
   Cpu,
   Layout,
   TreeStructure,
@@ -50,17 +45,15 @@ const DOCS_STRUCTURE = [
       { title: 'JSON Schemas', id: 'json' },
       { title: 'Regex Patterns', id: 'regex' },
       { title: 'Templates', id: 'templates' },
-      { title: 'CSV & HTML', id: 'csv-html' },
+      { title: 'CSV & HTML', id: 'csv' },
     ]
   },
   {
-    title: 'Advanced',
-    id: 'advanced',
+    title: 'Version History',
+    id: 'history',
     icon: <TreeStructure size={18} weight="bold" />,
     children: [
-      { title: 'Guided Generation', id: 'guided' },
-      { title: 'Artifact Library', id: 'library' },
-      { title: 'Security & Auth', id: 'security' },
+      { title: 'Changelog', id: 'changelog' },
     ]
   }
 ];

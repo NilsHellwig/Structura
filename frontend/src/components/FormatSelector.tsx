@@ -3,15 +3,15 @@ import * as Popover from '@radix-ui/react-popover';
 import { CaretDown, Check } from 'phosphor-react';
 import { useUIStore } from '../store/uiStore';
 import { useChatStore } from '../store/chatStore';
-import { OutputFormat } from '../types';
+import { type OutputFormat } from '../types';
 
 const formats: { value: OutputFormat; label: string }[] = [
-  { value: OutputFormat.DEFAULT, label: 'Default' },
-  { value: OutputFormat.JSON, label: 'JSON Schema' },
-  { value: OutputFormat.TEMPLATE, label: 'Template' },
-  { value: OutputFormat.REGEX, label: 'Regex' },
-  { value: OutputFormat.HTML, label: 'HTML' },
-  { value: OutputFormat.CSV, label: 'CSV' },
+  { value: 'default', label: 'Default' },
+  { value: 'json', label: 'JSON Schema' },
+  { value: 'template', label: 'Template' },
+  { value: 'regex', label: 'Regex' },
+  { value: 'html', label: 'HTML' },
+  { value: 'csv', label: 'CSV' },
 ];
 
 export default function FormatSelector() {
@@ -22,7 +22,7 @@ export default function FormatSelector() {
   const availableFormats = formats.filter(f => {
     const backendCapabilities = capabilities[backend] || [];
     // If capabilities are not yet loaded or not connected, show only default
-    if (!isConnected || Object.keys(capabilities).length === 0) return f.value === OutputFormat.DEFAULT;
+    if (!isConnected || Object.keys(capabilities).length === 0) return f.value === 'default';
     return backendCapabilities.includes(f.value);
   });
 
@@ -63,7 +63,7 @@ export default function FormatSelector() {
               darkMode ? 'text-white' : 'text-black'
             }`}>Output Protocol</span>
           </div>
-          {availableFormats.map((f) => (
+          {Array.isArray(availableFormats) && availableFormats.map((f) => (
             <button
               key={f.value}
               onClick={() => {

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { X, Sparkle, FileCode, Gear, Chat, ArrowRight } from 'phosphor-react';
+import { useEffect } from 'react';
+import { X, FileCode, Gear, Chat, ArrowRight } from 'phosphor-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUIStore } from '../store/uiStore';
 

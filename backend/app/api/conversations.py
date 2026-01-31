@@ -10,7 +10,7 @@ from app.models import User
 router = APIRouter(prefix="/conversations", tags=["conversations"])
 
 
-@router.get("/", response_model=List[ConversationResponse])
+@router.get("", response_model=List[ConversationResponse])
 def get_conversations(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -23,7 +23,7 @@ def get_conversations(
     return conversations
 
 
-@router.post("/", response_model=ConversationResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ConversationResponse, status_code=status.HTTP_201_CREATED)
 def create_conversation(
     conversation: ConversationCreate,
     current_user: User = Depends(get_current_user),

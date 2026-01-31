@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { CaretDown, Check, Cpu, GlobeHemisphereWest, Lightning } from 'phosphor-react';
+import { CaretDown, Check } from 'phosphor-react';
 import { useUIStore } from '../store/uiStore';
 import { useChatStore } from '../store/chatStore';
 import type { LLMBackend } from '../types';
@@ -17,7 +17,7 @@ const backends: { value: LLMBackend; label: string; icon: string; logo: string; 
     value: 'openai', 
     label: 'OpenAI', 
     icon: '🤖', 
-    logo: 'https://www.svgrepo.com/download/306500/openai.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg',
     description: 'Industry-standard intelligence with powerful cloud models from the creators of ChatGPT.'
   },
   { 

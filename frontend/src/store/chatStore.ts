@@ -194,7 +194,7 @@ export const useChatStore = create<ChatState>((set, get) => {
 
     loadConversations: async () => {
       try {
-        const response = await api.get('/conversations/');
+        const response = await api.get('/conversations');
         set({ conversations: response.data });
         if (!useChatStore.getState().currentConversationId && response.data.length > 0) {
           set({ currentConversationId: response.data[0].id });
@@ -252,7 +252,7 @@ export const useChatStore = create<ChatState>((set, get) => {
 
     createNewConversation: async () => {
       try {
-        const response = await api.post('/conversations/', {});
+        const response = await api.post('/conversations', {});
         const newConv = response.data;
         set((state) => ({
           conversations: [newConv, ...state.conversations],
@@ -318,7 +318,13 @@ export const useChatStore = create<ChatState>((set, get) => {
       if (state.outputFormat !== 'default' && state.formatSpec) {
         let textToInsert = '';
         if (state.outputFormat === 'json') {
-          textToInsert = `\n\n%-%-%\nYou must respond with valid JSON only. Do not add any explanations or extra text outside the JSON.`;
+          let schemaDisplay = state.formatSpec;
+          try {
+            schemaDisplay = JSON.stringify(JSON.parse(state.formatSpec), null, 2);
+          } catch (e) {
+            // keep original if not valid JSON
+          }
+          textToInsert = `\n\n%-%-%\nYou must respond with valid JSON only. The output must strictly follow this JSON schema:\n\`\`\`json\n${schemaDisplay}\n\`\`\`\n\nDo not add any explanations or extra text outside the JSON object.`;
         } else if (state.outputFormat === 'template') {
           const displayTemplate = state.formatSpec.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
           textToInsert = `\n\n%-%-%\nYour response must look exactly like this:\n\`\`\`\n${displayTemplate}\n\`\`\`\n\nReplace the entire [GEN] tag with appropriate text content. Example result:\nDo not add any explanations, greetings, or extra text. Only output the exact format shown above.`;
@@ -427,7 +433,7 @@ export const useChatStore = create<ChatState>((set, get) => {
                 if (parsed.assistant_message_id) assistantMsgId = parsed.assistant_message_id;
                 if (parsed.content) assistantContent += parsed.content;
 
-                set((s) => {
+                set(() => {
                   const updatedMessages = [...newMessages];
                   
                   // Update user message ID if found
@@ -442,7 +448,7 @@ export const useChatStore = create<ChatState>((set, get) => {
                   // Create/Update assistant message
                   const updatedAssistant = { 
                     ...assistantMessage, 
-                    content: assistantContent 
+                    content: assistantContent
                   };
                   if (assistantMsgId) {
                     updatedAssistant.id = assistantMsgId;

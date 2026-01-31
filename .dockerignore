@@ -1,0 +1,12 @@
+**/__pycache__
+**/*.pyc
+**/.git
+**/.vscode
+frontend/node_modules
+frontend/dist
+backend/venv
+backend/data
+backend/structura.db
+.dockerignore
+Dockerfile
+docker-compose.yml

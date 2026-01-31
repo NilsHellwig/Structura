@@ -1,19 +1,20 @@
 # Ollama Integration
 
-Structura is optimized for [Ollama](https://ollama.ai/), enabling true structured generation without relying on "prompt-only" constraints.
+Structura is highly optimized for [Ollama](https://ollama.ai/), the easiest way to run LLMs locally.
 
-### Native API Usage
-Unlike generic OpenAI-compatible wrappers, Structura communicates directly with Ollama's `/api/chat` endpoint. This allows us to use the `format` parameter effectively.
+## Why use Ollama with Structura?
 
-### JSON Schema Support
-When you select the JSON format, Structura sends your schema directly to Ollama. The model is then constrained to output only tokens that validate against that schema.
+Ollama provides a simple REST API that Structura leverages for:
+- **Native Constrained Sampling**: Using GBNF grammars to ensure valid JSON and text patterns.
+- **Ease of Use**: No complex GPU configurations needed; just download and run.
 
-### Regex & Templates
-For non-JSON formats like Regex or Templates, Structura converts your requirements into a JSON Schema pattern:
-```json
-{
-  "type": "string",
-  "pattern": "^YourPattern.*$"
-}
-```
-This ensures that Ollama's internal sampler adheres to your format with nearly 100% reliability.
+## Configuration
+
+- **Endpoint**: By default, Ollama runs on `http://localhost:11434`.
+- **Native Support**: Structura uses the Ollama native `/api/chat` interface to leverage advanced sampling and model-specific features.
+- **Auto-Discovery**: When you select the Ollama backend, Structura automatically queries your local instance for available models (e.g., `llama3.1`, `mistral`, `deepseek-r1`).
+
+## Troubleshooting
+
+1. **CORS Issues**: If Structura cannot connect, set `OLLAMA_ORIGINS="*"` in your environment variables before starting the Ollama service.
+2. **Model Availability**: Ensure you have pulled the models you want to use (`ollama pull llama3.1`).

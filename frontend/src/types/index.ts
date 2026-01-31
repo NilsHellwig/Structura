@@ -1,22 +1,8 @@
-export enum MessageRole {
-  USER = 'user',
-  ASSISTANT = 'assistant',
-}
+export type MessageRole = 'user' | 'assistant';
 
-export enum OutputFormat {
-  DEFAULT = 'default',
-  JSON = 'json',
-  TEMPLATE = 'template',
-  REGEX = 'regex',
-  HTML = 'html',
-  CSV = 'csv',
-}
+export type OutputFormat = 'default' | 'json' | 'template' | 'regex' | 'html' | 'csv';
 
-export enum LLMBackend {
-  OPENAI = 'openai',
-  VLLM = 'vllm',
-  OLLAMA = 'ollama',
-}
+export type LLMBackend = 'openai' | 'vllm' | 'ollama';
 
 export interface User {
   id: number;

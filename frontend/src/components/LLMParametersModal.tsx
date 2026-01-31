@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Faders, FloppyDisk, ArrowsClockwise } from 'phosphor-react';
+import { X, Faders, FloppyDisk, ArrowsClockwise, Code } from 'phosphor-react';
 import { motion } from 'framer-motion';
 import { useChatStore } from '../store/chatStore';
 import { useUIStore } from '../store/uiStore';
@@ -12,30 +12,67 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
   const { backend, llmParameters, setLLMParameters, updateBackendSetting } = useChatStore();
   const darkMode = useUIStore((state) => state.darkMode);
   
-  const [temperature, setTemperature] = useState(llmParameters.temperature || 0.7);
-  const [maxTokens, setMaxTokens] = useState(llmParameters.max_tokens || 1024);
-  const [topP, setTopP] = useState(llmParameters.top_p || 1.0);
+  // Standard parameters
+  const [temperature, setTemperature] = useState(llmParameters.temperature ?? 0.7);
+  const [maxTokens, setMaxTokens] = useState(llmParameters.max_tokens ?? 1024);
+  const [topP, setTopP] = useState(llmParameters.top_p ?? 1.0);
+  const [frequencyPenalty, setFrequencyPenalty] = useState(llmParameters.frequency_penalty ?? 0.0);
+  const [presencePenalty, setPresencePenalty] = useState(llmParameters.presence_penalty ?? 0.0);
+  const [seed, setSeed] = useState<number | undefined>(llmParameters.seed);
+  const [stop, setStop] = useState<string>(llmParameters.stop ? (Array.isArray(llmParameters.stop) ? llmParameters.stop.join(', ') : llmParameters.stop) : '');
+  
+  // Auth/Connection
   const [apiKey, setApiKey] = useState(llmParameters.api_key || '');
   const [baseUrl, setBaseUrl] = useState(
     llmParameters.base_url || 
     (backend === 'vllm' ? 'http://localhost:8000' : 'http://localhost:11434')
   );
 
+  // Custom parameters JSON
+  const [customParamsStr, setCustomParamsStr] = useState(JSON.stringify(llmParameters.custom_params || {}, null, 2));
+  const [isCustomValid, setIsCustomValid] = useState(true);
+
+  // Backend specific parameters
+  const [numCtx, setNumCtx] = useState(llmParameters.num_ctx ?? 2048); // Ollama specific
+
   const handleSave = async () => {
+    let customParams = {};
+    try {
+      customParams = JSON.parse(customParamsStr);
+    } catch (e) {
+      setIsCustomValid(false);
+      return;
+    }
+
     const params: Record<string, any> = {
       temperature,
       max_tokens: maxTokens,
       top_p: topP,
+      frequency_penalty: frequencyPenalty,
+      presence_penalty: presencePenalty,
+      seed: seed !== undefined ? seed : null,
+      stop: stop ? stop.split(',').map(s => s.trim()) : null,
       base_url: baseUrl,
-      api_key: apiKey
+      api_key: apiKey,
+      custom_params: customParams,
+      ...(backend === 'ollama' ? { num_ctx: numCtx } : {})
     };
     
     setLLMParameters(params);
-    
-    // Persist base_url and api_key to backend
     await updateBackendSetting(backend, baseUrl, apiKey);
-    
     onClose();
+  };
+
+  const resetToDefaults = () => {
+    setTemperature(0.7);
+    setMaxTokens(1024);
+    setTopP(1.0);
+    setFrequencyPenalty(0.0);
+    setPresencePenalty(0.0);
+    setSeed(undefined);
+    setStop('');
+    setCustomParamsStr('{}');
+    if (backend === 'ollama') setNumCtx(2048);
   };
 
   return (
@@ -46,13 +83,13 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
-        className={`max-w-md w-full rounded-[2.5rem] shadow-2xl overflow-hidden ${
+        className={`max-w-2xl w-full max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col ${
           darkMode 
             ? 'bg-zinc-950 border border-white/10' 
             : 'bg-white border border-zinc-200 shadow-zinc-200/50'
         }`}
       >
-        <div className="px-10 pt-10 pb-6 flex items-center justify-between">
+        <div className="px-8 pt-8 pb-6 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-4">
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
               darkMode ? 'bg-zinc-900 border border-white/10' : 'bg-white border border-zinc-200 shadow-sm'
@@ -62,10 +99,10 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
             <div>
               <h2 className={`text-lg font-black tracking-[-0.02em] ${
                 darkMode ? 'text-white' : 'text-black'
-              }`}>Intelligence</h2>
+              }`}>System Architecture</h2>
               <p className={`text-[10px] font-black uppercase tracking-[0.2em] opacity-40 ${
                 darkMode ? 'text-zinc-400' : 'text-zinc-500'
-              }`}>System Parameters</p>
+              }`}>Parameter configuration for {backend.toUpperCase()}</p>
             </div>
           </div>
           <button
@@ -78,152 +115,179 @@ export default function LLMParametersModal({ onClose }: LLMParametersModalProps)
           </button>
         </div>
 
-        <div className="px-10 py-6 space-y-8">
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${
-                darkMode ? 'text-zinc-500' : 'text-zinc-600'
-              }`}>
-                Temperature
-              </label>
-              <span className={`text-[10px] font-mono font-black px-2 py-1 rounded-lg ${
-                darkMode ? 'bg-white/5 text-yellow-500' : 'bg-zinc-50 text-yellow-600 border border-zinc-100 shadow-sm'
-              }`}>
-                {temperature.toFixed(1)}
-              </span>
+        <div className="flex-1 overflow-y-auto px-8 py-4 custom-scrollbar">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-8">
+            {/* Left Column - Core Sliders */}
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                    darkMode ? 'text-zinc-500' : 'text-zinc-600'
+                  }`}>Temperature</label>
+                  <span className={`text-[10px] font-mono font-black px-2 py-1 rounded-lg ${
+                    darkMode ? 'bg-white/10 text-white' : 'bg-zinc-100 text-black border border-zinc-200'
+                  }`}>{temperature.toFixed(1)}</span>
+                </div>
+                <input type="range" min="0" max="2" step="0.1" value={temperature} onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                  className="w-full h-1.5 bg-zinc-200 dark:bg-white/5 rounded-lg appearance-none cursor-pointer accent-zinc-950 dark:accent-white" />
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                    darkMode ? 'text-zinc-500' : 'text-zinc-600'
+                  }`}>Top P</label>
+                  <span className={`text-[10px] font-mono font-black px-2 py-1 rounded-lg ${
+                    darkMode ? 'bg-white/10 text-white' : 'bg-zinc-100 text-black border border-zinc-200'
+                  }`}>{topP.toFixed(2)}</span>
+                </div>
+                <input type="range" min="0" max="1" step="0.01" value={topP} onChange={(e) => setTopP(parseFloat(e.target.value))}
+                  className="w-full h-1.5 bg-zinc-200 dark:bg-white/5 rounded-lg appearance-none cursor-pointer accent-zinc-950 dark:accent-white" />
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                    darkMode ? 'text-zinc-500' : 'text-zinc-600'
+                  }`}>Frequency Penalty</label>
+                  <span className={`text-[10px] font-mono font-black px-2 py-1 rounded-lg ${
+                    darkMode ? 'bg-white/10 text-white' : 'bg-zinc-100 text-black border border-zinc-200'
+                  }`}>{frequencyPenalty.toFixed(2)}</span>
+                </div>
+                <input type="range" min="-2" max="2" step="0.01" value={frequencyPenalty} onChange={(e) => setFrequencyPenalty(parseFloat(e.target.value))}
+                  className="w-full h-1.5 bg-zinc-200 dark:bg-white/5 rounded-lg appearance-none cursor-pointer accent-zinc-950 dark:accent-white" />
+              </div>
             </div>
-            <input
-              type="range"
-              min="0"
-              max="2"
-              step="0.1"
-              value={temperature}
-              onChange={(e) => setTemperature(parseFloat(e.target.value))}
-              className="slider-zinc w-full h-1.5 bg-zinc-200 dark:bg-white/5 rounded-lg appearance-none cursor-pointer accent-yellow-500"
-            />
+
+            {/* Right Column - Secondary Controls */}
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                    darkMode ? 'text-zinc-500' : 'text-zinc-600'
+                  }`}>Max Tokens</label>
+                  <span className={`text-[10px] font-mono font-black px-2 py-1 rounded-lg ${
+                    darkMode ? 'bg-white/10 text-white' : 'bg-zinc-100 text-black border border-zinc-200'
+                  }`}>{maxTokens}</span>
+                </div>
+                <input type="range" min="1" max="16384" step="1" value={maxTokens} onChange={(e) => setMaxTokens(parseInt(e.target.value))}
+                  className="w-full h-1.5 bg-zinc-200 dark:bg-white/5 rounded-lg appearance-none cursor-pointer accent-zinc-950 dark:accent-white" />
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                    darkMode ? 'text-zinc-500' : 'text-zinc-600'
+                  }`}>Presence Penalty</label>
+                  <span className={`text-[10px] font-mono font-black px-2 py-1 rounded-lg ${
+                    darkMode ? 'bg-white/10 text-white' : 'bg-zinc-100 text-black border border-zinc-200'
+                  }`}>{presencePenalty.toFixed(2)}</span>
+                </div>
+                <input type="range" min="-2" max="2" step="0.01" value={presencePenalty} onChange={(e) => setPresencePenalty(parseFloat(e.target.value))}
+                  className="w-full h-1.5 bg-zinc-200 dark:bg-white/5 rounded-lg appearance-none cursor-pointer accent-zinc-950 dark:accent-white" />
+              </div>
+
+              {backend === 'ollama' && (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                      darkMode ? 'text-zinc-500' : 'text-zinc-600'
+                    }`}>Context Window</label>
+                    <span className={`text-[10px] font-mono font-black px-2 py-1 rounded-lg ${
+                      darkMode ? 'bg-white/10 text-white' : 'bg-zinc-100 text-black border border-zinc-200'
+                    }`}>{numCtx}</span>
+                  </div>
+                  <input type="range" min="512" max="128000" step="512" value={numCtx} onChange={(e) => setNumCtx(parseInt(e.target.value))}
+                    className="w-full h-1.5 bg-zinc-200 dark:bg-white/5 rounded-lg appearance-none cursor-pointer accent-zinc-950 dark:accent-white" />
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${
-                darkMode ? 'text-zinc-500' : 'text-zinc-600'
-              }`}>
-                Max Tokens
-              </label>
-              <span className={`text-[10px] font-mono font-black px-2 py-1 rounded-lg ${
-                darkMode ? 'bg-white/5 text-purple-400' : 'bg-zinc-100 text-purple-600'
-              }`}>
-                {maxTokens}
-              </span>
+          <div className={`h-[1px] w-full mb-8 ${darkMode ? 'bg-white/5' : 'bg-zinc-100'}`} />
+
+          {/* Connection & Advanced */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <label className={`text-[8px] font-black uppercase tracking-[0.2em] opacity-50 ${darkMode ? 'text-white' : 'text-black'}`}>Seed</label>
+                <input type="number" value={seed ?? ''} onChange={(e) => setSeed(e.target.value ? parseInt(e.target.value) : undefined)}
+                  className={`w-full h-10 px-4 rounded-xl border outline-none font-bold text-[11px] transition-all ${
+                    darkMode ? 'bg-white/5 border-white/5 text-white focus:border-white/20' : 'bg-white border-zinc-200 text-black focus:border-black'
+                  }`} placeholder="Random" />
+              </div>
+              <div className="space-y-2">
+                <label className={`text-[8px] font-black uppercase tracking-[0.2em] opacity-50 ${darkMode ? 'text-white' : 'text-black'}`}>Stop Sequences</label>
+                <input type="text" value={stop} onChange={(e) => setStop(e.target.value)}
+                  className={`w-full h-10 px-4 rounded-xl border outline-none font-bold text-[11px] transition-all ${
+                    darkMode ? 'bg-white/5 border-white/5 text-white focus:border-white/20' : 'bg-white border-zinc-200 text-black focus:border-black'
+                  }`} placeholder="Separate with commas" />
+              </div>
             </div>
-            <input
-              type="range"
-              min="1"
-              max="8192"
-              step="1"
-              value={maxTokens}
-              onChange={(e) => setMaxTokens(parseInt(e.target.value))}
-              className="slider-zinc w-full h-1.5 bg-zinc-200 dark:bg-white/5 rounded-lg appearance-none cursor-pointer accent-purple-500"
-            />
+
+            <div className="space-y-6">
+              {backend === 'openai' ? (
+                <div className="space-y-2">
+                  <label className={`text-[8px] font-black uppercase tracking-[0.2em] opacity-50 ${darkMode ? 'text-white' : 'text-black'}`}>API Key</label>
+                  <input type="password" value={apiKey} onChange={(e) => setApiKey(e.target.value)}
+                    className={`w-full h-10 px-4 rounded-xl border outline-none font-bold text-[11px] transition-all ${
+                      darkMode ? 'bg-white/5 border-white/5 text-white focus:border-white/20' : 'bg-white border-zinc-200 text-black focus:border-black'
+                    }`} placeholder="sk-..." />
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <label className={`text-[8px] font-black uppercase tracking-[0.2em] opacity-50 ${darkMode ? 'text-white' : 'text-black'}`}>Base URL</label>
+                  <input type="url" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)}
+                    className={`w-full h-10 px-4 rounded-xl border outline-none font-bold text-[11px] transition-all ${
+                      darkMode ? 'bg-white/5 border-white/5 text-white focus:border-white/20' : 'bg-white border-zinc-200 text-black focus:border-black'
+                    }`} placeholder="http://..." />
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <label className={`text-[10px] font-black uppercase tracking-[0.2em] ${
-                darkMode ? 'text-zinc-500' : 'text-zinc-600'
-              }`}>
-                Top P
-              </label>
-              <span className={`text-[10px] font-mono font-black px-2 py-1 rounded-lg ${
-                darkMode ? 'bg-white/5 text-orange-400' : 'bg-zinc-100 text-orange-600'
-              }`}>
-                {topP.toFixed(2)}
-              </span>
+          {/* Custom Params JSON Editor */}
+          <div className="space-y-3 mb-8">
+            <div className="flex items-center gap-2">
+              <Code size={12} weight="bold" className="opacity-40" />
+              <label className={`text-[8px] font-black uppercase tracking-[0.2em] opacity-50 ${darkMode ? 'text-white' : 'text-black'}`}>Custom Parameters (JSON)</label>
             </div>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={topP}
-              onChange={(e) => setTopP(parseFloat(e.target.value))}
-              className="slider-zinc w-full h-1.5 bg-zinc-200 dark:bg-white/5 rounded-lg appearance-none cursor-pointer accent-orange-500"
-            />
-          </div>
-
-          {backend === 'openai' && (
-            <div className="space-y-3">
-              <label className={`block text-[10px] font-black uppercase tracking-[0.2em] ${
-                darkMode ? 'text-zinc-500' : 'text-zinc-600'
-              }`}>
-                API Key
-              </label>
-              <input
-                type="password"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                placeholder="sk-..."
-                className={`w-full h-14 px-6 rounded-2xl border outline-none font-bold text-sm transition-all ${
-                  darkMode
-                    ? 'bg-white/5 border-white/5 text-white placeholder-zinc-700 focus:border-white/10'
-                    : 'bg-white border-zinc-200 text-black placeholder-zinc-400 focus:border-black shadow-sm'
-                }`}
-              />
-            </div>
-          )}
-
-          {backend !== 'openai' && (
-            <div className="space-y-3">
-              <label className={`block text-[10px] font-black uppercase tracking-[0.2em] ${
-                darkMode ? 'text-zinc-500' : 'text-zinc-600'
-              }`}>
-                Base URL
-              </label>
-              <input
-                type="url"
-                value={baseUrl}
-                onChange={(e) => setBaseUrl(e.target.value)}
-                placeholder={backend === 'vllm' ? 'http://localhost:8000' : 'http://localhost:11434'}
-                className={`w-full h-14 px-6 rounded-2xl border outline-none font-bold text-sm transition-all ${
-                  darkMode
-                    ? 'bg-white/5 border-white/5 text-white placeholder-zinc-700 focus:border-white/10'
-                    : 'bg-white border-zinc-200 text-black placeholder-zinc-400 focus:border-black shadow-sm'
-                }`}
-              />
-            </div>
-          )}
-
-          <div className="pt-2 flex gap-4">
-            <button
-              onClick={() => {
-                setTemperature(0.7);
-                setMaxTokens(1024);
-                setTopP(1.0);
+            <textarea
+              value={customParamsStr}
+              onChange={(e) => {
+                setCustomParamsStr(e.target.value);
+                try {
+                  JSON.parse(e.target.value);
+                  setIsCustomValid(true);
+                } catch {
+                  setIsCustomValid(false);
+                }
               }}
-              className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-3 transition-all cursor-pointer ${
-                darkMode 
-                  ? 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border border-white/5' 
-                  : 'bg-white text-zinc-400 hover:bg-zinc-50 hover:text-black border border-zinc-200 shadow-sm'
+              rows={4}
+              className={`w-full p-4 rounded-2xl border outline-none font-mono text-[10px] transition-all resize-none ${
+                !isCustomValid 
+                  ? 'border-red-500 bg-red-500/5' 
+                  : darkMode ? 'bg-black border-white/10 text-zinc-300 focus:border-white/20' : 'bg-zinc-50 border-zinc-200 text-zinc-600 focus:border-black'
               }`}
-            >
-              <ArrowsClockwise size={20} weight="bold" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Reset</span>
-            </button>
-            <button
-              onClick={handleSave}
-              className={`flex-[2] h-14 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] cursor-pointer ${
-                darkMode 
-                  ? 'bg-white text-black hover:bg-zinc-200 shadow-xl shadow-white/5' 
-                  : 'bg-zinc-950 text-white hover:bg-zinc-800 shadow-xl shadow-black/10'
-              }`}
-            >
-              <FloppyDisk size={20} weight="bold" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Save</span>
-            </button>
+            />
+            {!isCustomValid && <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">Invalid JSON structure</p>}
           </div>
         </div>
-        
-        <div className="h-8" />
+
+        <div className={`px-8 py-6 border-t flex gap-4 flex-shrink-0 ${darkMode ? 'bg-white/5 border-white/10' : 'bg-zinc-50 border-zinc-200'}`}>
+          <button onClick={resetToDefaults} className={`flex-1 h-12 rounded-xl flex items-center justify-center gap-3 transition-all cursor-pointer ${
+            darkMode ? 'text-zinc-500 hover:text-white hover:bg-white/5' : 'text-zinc-400 hover:text-black hover:bg-zinc-200/50'
+          }`}>
+            <ArrowsClockwise size={18} weight="bold" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Reset</span>
+          </button>
+          <button onClick={handleSave} className={`flex-[2] h-12 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] cursor-pointer ${
+            darkMode ? 'bg-white text-black hover:bg-zinc-200' : 'bg-zinc-950 text-white hover:bg-zinc-800'
+          }`}>
+            <FloppyDisk size={18} weight="bold" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Apply Configuration</span>
+          </button>
+        </div>
       </motion.div>
     </div>
   );

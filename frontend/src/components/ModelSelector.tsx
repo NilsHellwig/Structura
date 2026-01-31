@@ -80,7 +80,7 @@ export default function ModelSelector() {
             }`}>Model Inventory</span>
           </div>
           <div className="max-h-[400px] overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-            {models.map((m) => (
+            {Array.isArray(models) && models.map((m) => (
               <button
                 key={m}
                 onClick={() => {
@@ -101,7 +101,7 @@ export default function ModelSelector() {
                 {model === m && <Check size={14} weight="bold" />}
               </button>
             ))}
-            {models.length === 0 && (
+            {(!Array.isArray(models) || models.length === 0) && (
               <div className="px-4 py-8 text-center">
                 <p className={`text-[10px] font-black uppercase tracking-widest opacity-20 ${
                   darkMode ? 'text-white' : 'text-black'

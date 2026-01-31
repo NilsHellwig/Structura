@@ -15,8 +15,7 @@ DEFAULT_SCHEMAS = [
             "type": "object",
             "properties": {
                 "sentiment": {"type": "string", "enum": ["positive", "negative", "neutral"]},
-                "confidence": {"type": "number"},
-                "reasoning": {"type": "string"}
+                "confidence": {"type": "number"}
             },
             "required": ["sentiment", "confidence"]
         }, indent=2)

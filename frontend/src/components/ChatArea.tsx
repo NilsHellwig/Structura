@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, Check, PencilSimple, Trash, CheckCircle, XCircle, Sparkle, PaperPlaneRight, FileCsv, Table, ArrowsClockwise, ArrowDown } from 'phosphor-react';
+import { Copy, Check, PencilSimple, Trash, XCircle, Sparkle, PaperPlaneRight, FileCsv, ArrowsClockwise, ArrowDown } from 'phosphor-react';
 import { useUIStore } from '../store/uiStore';
 import { useChatStore } from '../store/chatStore';
 import { useAuthStore } from '../store/authStore';
@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 
 const backendLogos: Record<string, string> = {
   ollama: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/ollama-icon.svg',
-  openai: 'https://www.svgrepo.com/download/306500/openai.svg',
+  openai: 'https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg',
   vllm: 'https://raw.githubusercontent.com/vllm-project/media-kit/main/vLLM-Full-Logo.svg',
 };
 
@@ -17,7 +17,6 @@ export default function ChatArea() {
   const darkMode = useUIStore((state) => state.darkMode);
   const messages = useChatStore((state) => state.messages);
   const isLoading = useChatStore((state) => state.isLoading);
-  const editMessage = useChatStore((state) => state.editMessage);
   const deleteMessage = useChatStore((state) => state.deleteMessage);
   const sendMessage = useChatStore((state) => state.sendMessage);
   const user = useAuthStore((state) => state.user);
@@ -28,6 +27,7 @@ export default function ChatArea() {
   const [showScrollButton, setShowScrollButton] = useState(false);
 
   const [editingMessageId, setEditingMessageId] = useState<number | null>(null);
+
   const [editContent, setEditContent] = useState('');
 
   const handleScroll = useCallback(() => {
@@ -321,9 +321,11 @@ export default function ChatArea() {
                           </div>
                         </div>
                       ) : (
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-                          {message.content.split('%-%-%')[0].trim()}
-                        </p>
+                        <div className="space-y-4">
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+                            {message.content.split('%-%-%')[0].trim()}
+                          </p>
+                        </div>
                       )
                     ) : (
                       <>

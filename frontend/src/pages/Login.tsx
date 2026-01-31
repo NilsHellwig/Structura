@@ -76,6 +76,17 @@ export default function Login() {
           <div className={`absolute -bottom-24 -left-24 w-48 h-48 rounded-full blur-3xl opacity-20 pointer-events-none ${darkMode ? 'bg-purple-500' : 'bg-purple-400'}`} />
           
           <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`p-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] text-center ${
+                  darkMode ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-rose-50/50 text-rose-500 border border-rose-100'
+                }`}
+              >
+                {error}
+              </motion.div>
+            )}
             <div className="space-y-3">
               <label className={`block text-[10px] font-black uppercase tracking-[0.2em] pl-1 ${
                 darkMode ? 'text-zinc-500' : 'text-zinc-400'

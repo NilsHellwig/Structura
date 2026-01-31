@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FloppyDisk, Trash, FolderOpen, Code, Warning, CheckCircle, Info, SquaresFour, FileCode, Plus } from 'phosphor-react';
+import { FloppyDisk, Trash, FolderOpen, Warning, CheckCircle, Info, SquaresFour, FileCode, Plus } from 'phosphor-react';
 import { useChatStore } from '../../store/chatStore';
 import { useUIStore } from '../../store/uiStore';
 import type { JSONSchema } from '../../types';
@@ -13,8 +13,7 @@ const EXAMPLES = [
       type: "object",
       properties: {
         sentiment: { type: "string", enum: ["positive", "negative", "neutral"] },
-        confidence: { type: "number" },
-        reasoning: { type: "string" }
+        confidence: { type: "number" }
       },
       required: ["sentiment", "confidence"]
     }, null, 2)

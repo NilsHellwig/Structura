@@ -73,12 +73,12 @@ async def list_models(
         )
 
 
-@router.get("/capabilities")
+@router.get("/capabilities", response_model=Dict[str, List[str]])
 async def get_capabilities():
     """Get the supported output formats for each backend"""
     return {
-        LLMBackend.openai: [OutputFormat.default, OutputFormat.json],
-        LLMBackend.vllm: [
+        "openai": [OutputFormat.default, OutputFormat.json],
+        "vllm": [
             OutputFormat.default, 
             OutputFormat.json, 
             OutputFormat.template, 
@@ -86,7 +86,7 @@ async def get_capabilities():
             OutputFormat.html, 
             OutputFormat.csv
         ],
-        LLMBackend.ollama: [
+        "ollama": [
             OutputFormat.default, 
             OutputFormat.json, 
             OutputFormat.template, 
@@ -162,7 +162,9 @@ async def generate(
             Message.conversation_id == request.conversation_id
         ).order_by(Message.created_at).all()
         
-        llm_messages = [{"role": m.role.value, "content": m.content} for m in history]
+        llm_messages = []
+        for m in history:
+            llm_messages.append({"role": m.role.value, "content": m.content})
         
         async def stream_generator():
             try:
@@ -179,8 +181,10 @@ async def generate(
                     parameters=merged_params
                 ):
                     if chunk:
-                        accumulated_content += chunk
-                        yield f"data: {json.dumps({'content': chunk})}\n\n"
+                        if "content" in chunk:
+                            accumulated_content += chunk["content"]
+                        
+                        yield f"data: {json.dumps(chunk)}\n\n"
                 
                 # Save assistant message once done
                 if accumulated_content:

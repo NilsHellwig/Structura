@@ -35,7 +35,7 @@ class MessageCreate(BaseModel):
     model: str
     output_format: OutputFormat
     llm_parameters: Optional[Dict[str, Any]] = None
-    format_spec: Optional[str] = None  # JSON schema, template, or regex
+    format_spec: Optional[str] = None
 
 
 class MessageUpdate(BaseModel):

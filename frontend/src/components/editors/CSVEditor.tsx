@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash, Table, Info, FloppyDisk, FolderOpen, CheckCircle } from 'phosphor-react';
+import { Plus, Trash, Table, Info, FloppyDisk, FolderOpen } from 'phosphor-react';
 import { useChatStore } from '../../store/chatStore';
 import { useUIStore } from '../../store/uiStore';
 import type { CSVPreset } from '../../types';

@@ -1,23 +1,25 @@
-# JSON Schemas
+# JSON Structured Outputs
 
-JSON (JavaScript Object Notation) is the industry standard for data exchange. Structura allows you to define a JSON Schema that the LLM must follow.
+The JSON format is the primary method for extracting programmatic data from LLMs. Structura provides a dual-interface for managing these schemas: a **Visual GUI** and a **Raw Schema Editor**.
 
-## How it works
-When you select a JSON Schema format, Structura sends the schema to the backend. 
-- If using **Ollama Native**, the model uses constrained sampling to only pick tokens that satisfy the JSON structure.
-- If using **OpenAI**, we use their Structured Outputs feature.
+## The GUI Editor
 
-## Example Schema
-```json
-{
-  "type": "object",
-  "properties": {
-    "name": { "type": "string" },
-    "age": { "type": "number" },
-    "hobbies": { "type": "array", "items": { "type": "string" } }
-  },
-  "required": ["name", "age"]
-}
-```
+Structura includes a proprietary tree-based schema builder. This allows users to:
+- Add nested objects and arrays.
+- Define string, number, and boolean types.
+- Set "Required" flags on specific properties.
+- Toggle between a developer-friendly tree and raw JSON.
 
-This ensures you never get a "Sure, here is your JSON" message followed by markdown; you get *only* the raw JSON.
+## Implementation Details
+
+### OpenAI (Structured Outputs)
+For OpenAI models (gpt-4o and newer), Structura utilizes the `json_schema` response format with `strict: true`. This guarantees that the output matches your schema with 100% reliability.
+
+### Ollama & vLLM (Constrained Sampling)
+Local backends utilize GBNF (GGML BNF) grammars or XGrammar to constrain the model's logits during prediction. Structura automatically converts your JSON Schema into the required backend format, ensuring the model cannot deviate from the defined structure.
+
+## Best Practices
+
+- **Keep it Simple**: Large schemas can consume significant context and "confuse" smaller models.
+- **Provide Samples**: If a field is complex, use the prompt to provide an example of the expected value.
+- **Use Descriptions**: Even though Structura's GUI focuses on types, adding descriptions to properties in the raw editor helps the model understand intent.
