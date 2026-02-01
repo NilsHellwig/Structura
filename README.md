@@ -52,15 +52,16 @@ Whether you prefer the tactical feel of **Dark Mode** or the clean aesthetics of
 
 ### Installation (Docker - Quick Start)
 
-The easiest way to run Structura is using Docker:
+The easiest way to run Structura is to build and run the container:
 
 ```bash
 git clone https://github.com/NilsHellwig/structura.git
 cd structura
-docker-compose up --build
+docker build -t structura .
+docker run -d -p 8000:8000 -v ./data:/app/data structura
 ```
 
-Access the UI at [http://localhost:3000](http://localhost:3000).
+Access the UI at [http://localhost:8000](http://localhost:8000).
 
 ### Installation (Manual)
 
